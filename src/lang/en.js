@@ -79,6 +79,7 @@ export default {
     logIn: 'Log in',
     username: 'Username',
     password: 'Password',
+    captcha: 'Captcha',
     any: 'any'
   },
   documentation: {

@@ -9,7 +9,18 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    // proxyTable: {},
+    proxyTable: {
+      '/api': {
+        // 代理地址
+        target: 'http://lajiao.vrdete.com/api', // 需要代理的地址
+        changeOrigin: true, // 是否跨域
+        // secure: false,
+        // pathRewrite: {
+        //   '^/api': '/' // 重写接口
+        // }
+      }
+    },
 
     // Various Dev Server settings
 

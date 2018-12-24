@@ -8,11 +8,13 @@ export function getRSAPublicKey() {
 }
 
 export function loginByEncryptedData(str) {
-  const data = { str }
   return request({
     url: '/login.do',
     method: 'post',
-    data
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    data: str
   })
 }
 

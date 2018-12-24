@@ -304,8 +304,8 @@ export function generateRandomString(length) {
   return text
 }
 
-export function httpEncodeSpecialChar(sStr) {
-  return escape(sStr)
+export function httpEncodeSpecialChar(str) {
+  return escape(str)
     .replace(/\+/g, '%2B')
     .replace(/\"/g, '%22')
     .replace(/\'/g, '%27')

@@ -1,4 +1,5 @@
 import JSEncrypt from 'jsencrypt'
+import md5 from 'md5'
 import {
   getRSAPublicKey,
   loginByEncryptedData,
@@ -53,16 +54,20 @@ const user = {
   actions: {
     // 用户名登录
     async LoginByUsername({ commit }, userInfo) {
-      userInfo.username = userInfo.username.trim()
+      const loginInfo = {
+        account: userInfo.username.trim(),
+        password: md5(md5(userInfo.password) + userInfo.captcha),
+        verifyCode: userInfo.captcha
+      }
       const publicKeyRes = await getRSAPublicKey().catch(e => {
         console.error(e)
         throw new Error('Get RSA public key error.')
       })
       const encrypt = new JSEncrypt()
       // 设置公钥
-      encrypt.setPublicKey(publicKeyRes.keyword)
+      encrypt.setPublicKey(publicKeyRes.data.keyword)
       // 加密
-      const theEncrptBodyStr = encrypt.encrypt(JSON.stringify(userInfo))
+      const theEncrptBodyStr = encrypt.encrypt(JSON.stringify(loginInfo))
       const postJson = httpEncodeSpecialChar(theEncrptBodyStr)
       const loginRes = await loginByEncryptedData(postJson).catch(e => {
         console.error(e)

@@ -30,11 +30,20 @@
           v-model="loginForm.password"
           :placeholder="$t('login.password')"
           name="password"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin" />
+          auto-complete="on" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
+      </el-form-item>
+
+      <el-form-item prop="captcha" class="captcha-row">
+        <el-input
+          v-model="loginForm.captcha"
+          :placeholder="$t('login.captcha')"
+          name="captcha"
+          auto-complete="on"
+          @keyup.enter.native="handleLogin" />
+        <img :src="captchaUrl" @click="refreshCaptcha">
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
@@ -67,9 +76,11 @@ export default {
       }
     }
     return {
+      captchaUrl: '/api/console/v01/kaptcha/kaptcha.jpg',
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        username: '13662685556',
+        password: '123456',
+        captcha: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -96,6 +107,9 @@ export default {
       } else {
         this.passwordType = 'password'
       }
+    },
+    refreshCaptcha() {
+      this.captchaUrl = `http://lajiao.vrdete.com/api/console/v01/kaptcha/kaptcha.jpg?date=${new Date().getTime()}`
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
@@ -182,6 +196,11 @@ $light_gray:#eee;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
     margin: 120px auto;
+    .captcha-row {
+      img {
+        width: 60px;
+      }
+    }
   }
   .tips {
     font-size: 14px;
