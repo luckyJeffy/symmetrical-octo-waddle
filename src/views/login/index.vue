@@ -89,12 +89,6 @@ export default {
       immediate: true
     }
   },
-  created() {
-    // window.addEventListener('hashchange', this.afterQRScan)
-  },
-  destroyed() {
-    // window.removeEventListener('hashchange', this.afterQRScan)
-  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -118,24 +112,6 @@ export default {
           return false
         }
       })
-    },
-    afterQRScan() {
-      // const hash = window.location.hash.slice(1)
-      // const hashObj = getQueryObject(hash)
-      // const originUrl = window.location.origin
-      // history.replaceState({}, '', originUrl)
-      // const codeMap = {
-      //   wechat: 'code',
-      //   tencent: 'code'
-      // }
-      // const codeName = hashObj[codeMap[this.auth_type]]
-      // if (!codeName) {
-      //   alert('第三方登录失败')
-      // } else {
-      //   this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-      //     this.$router.push({ path: '/' })
-      //   })
-      // }
     }
   }
 }
