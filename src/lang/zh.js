@@ -1,5 +1,7 @@
 export default {
   route: {
+    router: '路由',
+    routerBoard: '路由管理',
     dashboard: '首页',
     introduction: '简述',
     documentation: '文档',

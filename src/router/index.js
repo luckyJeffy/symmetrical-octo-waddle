@@ -111,6 +111,29 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
+    path: '/router',
+    component: Layout,
+    redirect: '/router/index',
+    alwaysShow: true,
+    meta: {
+      title: 'router',
+      icon: 'tree',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'board',
+        component: () => import('@/views/router/board'),
+        name: 'RouterBoard',
+        meta: {
+          title: 'routerBoard',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',

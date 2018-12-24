@@ -1,5 +1,7 @@
 export default {
   route: {
+    router: 'Router',
+    routerBoard: 'Router Board',
     dashboard: 'Dashboard',
     introduction: 'Introduction',
     documentation: 'Documentation',
