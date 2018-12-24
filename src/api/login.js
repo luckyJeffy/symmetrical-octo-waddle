@@ -1,5 +1,21 @@
 import request from '@/utils/request'
 
+export function getRSAPublicKey() {
+  return request({
+    url: '/getRSAPublicKey.do',
+    method: 'get'
+  })
+}
+
+export function loginByEncryptedData(str) {
+  const data = { str }
+  return request({
+    url: '/login.do',
+    method: 'post',
+    data
+  })
+}
+
 export function loginByUsername(username, password) {
   const data = {
     username,
@@ -26,4 +42,3 @@ export function getUserInfo(token) {
     params: { token }
   })
 }
-

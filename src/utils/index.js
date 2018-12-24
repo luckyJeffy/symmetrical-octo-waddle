@@ -26,7 +26,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
     let value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }
@@ -292,11 +294,20 @@ export function isExternal(path) {
 
 export function generateRandomString(length) {
   let text = ''
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
   for (let i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length))
   }
 
   return text
+}
+
+export function httpEncodeSpecialChar(sStr) {
+  return escape(sStr)
+    .replace(/\+/g, '%2B')
+    .replace(/\"/g, '%22')
+    .replace(/\'/g, '%27')
+    .replace(/\//g, '%2F')
 }
