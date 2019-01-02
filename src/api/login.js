@@ -37,10 +37,10 @@ export function logout() {
   })
 }
 
-export function getUserInfo(token) {
+export function getUserInfo(id) {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+    url: '/getConsoleUserAccount.do',
+    method: 'post',
+    data: { id }
   })
 }

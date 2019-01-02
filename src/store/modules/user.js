@@ -1,12 +1,4 @@
-import JSEncrypt from 'jsencrypt'
-import md5 from 'md5'
-import {
-  getRSAPublicKey,
-  loginByEncryptedData,
-  logout,
-  getUserInfo
-} from '@/api/login'
-import { httpEncodeSpecialChar } from '@/utils/index'
+import { loginByEncryptedData, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -15,6 +7,7 @@ const user = {
     status: '',
     code: '',
     token: getToken(),
+    userId: '',
     name: '',
     avatar: '',
     introduction: '',
@@ -30,6 +23,9 @@ const user = {
     },
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_USERID: (state, userId) => {
+      state.userId = userId
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -52,54 +48,53 @@ const user = {
   },
 
   actions: {
-    // 用户名登录
-    async LoginByUsername({ commit }, userInfo) {
-      const loginInfo = {
-        account: userInfo.username.trim(),
-        password: md5(md5(userInfo.password) + userInfo.captcha),
-        verifyCode: userInfo.captcha
-      }
-      const publicKeyRes = await getRSAPublicKey().catch(e => {
-        console.error(e)
-        throw new Error('Get RSA public key error.')
+    // 使用编码后的用户信息登录
+    LoginByEncryptedData({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        loginByEncryptedData(data)
+          .then(response => {
+            if (!response.data) {
+              reject('Login by encrypted data error!')
+            }
+            if (response.resultCode !== '200') {
+              reject(response.resultMessage)
+            }
+            const loginRes = response.data
+            commit('SET_TOKEN', loginRes.accessToken)
+            commit('SET_USERID', loginRes.id)
+            setToken(loginRes.accessToken)
+            resolve()
+          })
+          .catch(e => {
+            console.error(e)
+            throw new Error('Login error.')
+          })
       })
-      const encrypt = new JSEncrypt()
-      // 设置公钥
-      encrypt.setPublicKey(publicKeyRes.data.keyword)
-      // 加密
-      const theEncrptBodyStr = encrypt.encrypt(JSON.stringify(loginInfo))
-      const postJson = httpEncodeSpecialChar(theEncrptBodyStr)
-      const loginRes = await loginByEncryptedData(postJson).catch(e => {
-        console.error(e)
-        throw new Error('Login error.')
-      })
-      const loginResData = loginRes.data
-      commit('SET_TOKEN', loginResData.token)
-      setToken(loginResData.token)
     },
 
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.token)
+        getUserInfo(state.userId)
           .then(response => {
             if (!response.data) {
               // 由于mockjs 不支持自定义状态码只能这样hack
               reject('error')
             }
             const data = response.data
-
-            if (data.roles && data.roles.length > 0) {
-              // 验证返回的roles是否是一个非空数组
-              commit('SET_ROLES', data.roles)
+            // 只要是管理员 那就直接写死roles 😄
+            const isAdmin = data.name.includes('管理员')
+            if (isAdmin) {
+              commit('SET_ROLES', ['admin'])
             } else {
               reject('getInfo: roles must be a non-null array !')
             }
 
             commit('SET_NAME', data.name)
-            commit('SET_AVATAR', data.avatar)
-            commit('SET_INTRODUCTION', data.introduction)
-            resolve(response)
+            // commit('SET_AVATAR', data.avatar)
+            commit('SET_INTRODUCTION', data.oneRoleVo.description)
+            // 依旧写死 😄
+            resolve({ roles: 'admin' })
           })
           .catch(error => {
             reject(error)
