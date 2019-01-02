@@ -109,7 +109,7 @@ export default {
       }
     },
     refreshCaptcha() {
-      this.captchaUrl = `http://lajiao.vrdete.com/api/console/v01/kaptcha/kaptcha.jpg?date=${new Date().getTime()}`
+      this.captchaUrl = `/api/console/v01/kaptcha/kaptcha.jpg?date=${new Date().getTime()}`
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
