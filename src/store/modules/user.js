@@ -56,8 +56,8 @@ const user = {
             if (!response.data) {
               reject('Login by encrypted data error!')
             }
-            if (response.resultCode !== '200') {
-              reject(response.resultMessage)
+            if (response.data.resultCode !== '200') {
+              reject(response.data.resultMessage)
             }
             const loginRes = response.data
             commit('SET_TOKEN', loginRes.accessToken)

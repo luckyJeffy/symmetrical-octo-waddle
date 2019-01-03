@@ -168,7 +168,9 @@ export default {
           this.$store.dispatch('LoginByEncryptedData', postJson).then(() => {
             this.loading = false
             this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
+          }).catch((error) => {
+            this.$message.error(error)
+            this.refreshCaptcha()
             this.loading = false
           })
         } else {
