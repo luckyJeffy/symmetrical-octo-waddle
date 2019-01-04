@@ -2,14 +2,14 @@ import request from '@/utils/request'
 
 export function getRSAPublicKey() {
   return request({
-    url: '/getRSAPublicKey.do',
+    url: '/console/v01//getRSAPublicKey.do',
     method: 'get'
   })
 }
 
 export function loginByEncryptedData(str) {
   return request({
-    url: '/login.do',
+    url: '/console/v01/login.do',
     method: 'post',
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
@@ -39,7 +39,7 @@ export function logout() {
 
 export function getUserInfo(id) {
   return request({
-    url: '/getConsoleUserAccount.do',
+    url: '/console/v01/getConsoleUserAccount.do',
     method: 'post',
     data: { id }
   })
