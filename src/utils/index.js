@@ -311,3 +311,16 @@ export function httpEncodeSpecialChar(str) {
     .replace(/\'/g, '%27')
     .replace(/\//g, '%2F')
 }
+
+export function recursivelyParseObjectString(objectString) {
+  let tmpObject = ''
+  try {
+    tmpObject = JSON.parse(objectString)
+  } catch (error) {
+    return objectString
+  }
+  Object.keys(tmpObject).map(item => {
+    tmpObject[item] = recursivelyParseObjectString(tmpObject[item])
+  })
+  return tmpObject
+}

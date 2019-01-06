@@ -48,6 +48,14 @@
             <el-form-item label="最后更新时间">
               <span>{{ props.row.lastUpdateTime }}</span>
             </el-form-item>
+            <el-form-item label="其它信息">
+              <div
+                v-for="(value, key) in props.row.otherPropertyJson"
+                :key="key"
+              >
+                {{ key }}: {{ value }}
+              </div>
+            </el-form-item>
             <el-form-item label="商品缩略图">
               <img :src="props.row.icon">
             </el-form-item>
@@ -81,7 +89,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { parseTime } from '@/utils/index'
+import { parseTime, recursivelyParseObjectString } from '@/utils/index'
 import local from './local'
 const viewName = 'productList'
 
@@ -109,6 +117,7 @@ export default {
         return Object.assign({}, item, {
           createTime: parseTime(item.createTime),
           lastUpdateTime: parseTime(item.lastUpdateTime),
+          otherPropertyJson: recursivelyParseObjectString(item.otherPropertyJson),
           price: `${item.price / 100} CNY`
         })
       })
