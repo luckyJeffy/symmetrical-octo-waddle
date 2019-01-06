@@ -1,80 +1,96 @@
 <template>
   <div class="product-list-container">
-    <el-table
-      v-loading="tableLoading"
-      :data="formattedProductList"
-      style="width: 100%"
-    >
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form
-            label-position="left"
-            inline
-            class="table-expand"
-          >
-            <el-form-item label="商品名称">
-              <span>{{ props.row.name }}</span>
-            </el-form-item>
-            <el-form-item label="商品 ID">
-              <span>{{ props.row.id }}</span>
-            </el-form-item>
-            <el-form-item label="门店 ID">
-              <span>{{ props.row.storeId }}</span>
-            </el-form-item>
-            <el-form-item label="序列货号">
-              <span>{{ props.row.serNum }}</span>
-            </el-form-item>
-            <el-form-item label="产品条码">
-              <span>{{ props.row.barCode }}</span>
-            </el-form-item>
-            <el-form-item label="市场价或原价">
-              <span>{{ props.row.originPrice }}</span>
-            </el-form-item>
-            <el-form-item label="商品分类 ID">
-              <span>{{ props.row.catalogId }}</span>
-            </el-form-item>
-            <el-form-item label="商品描述">
-              <span>{{ props.row.title }}</span>
-            </el-form-item>
-            <el-form-item label="规格">
-              <span>{{ props.row.specification }}</span>
-            </el-form-item>
-            <el-form-item label="价格">
-              <span>{{ props.row.price }}</span>
-            </el-form-item>
-            <el-form-item label="创建时间">
-              <span>{{ props.row.createTime }}</span>
-            </el-form-item>
-            <el-form-item label="最后更新时间">
-              <span>{{ props.row.lastUpdateTime }}</span>
-            </el-form-item>
-            <el-form-item label="其它信息">
-              <div
-                v-for="(value, key) in props.row.otherPropertyJson"
-                :key="key"
+    <el-row>
+      <el-col
+        :xs="24"
+        :sm="24"
+        :md="24"
+        :lg="24"
+        :xl="24"
+      >
+        <el-table
+          v-loading="tableLoading"
+          :data="formattedProductList"
+          style="width: 100%"
+        >
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form
+                label-position="left"
+                inline
+                class="table-expand"
               >
-                {{ key }}: {{ value }}
-              </div>
-            </el-form-item>
-            <el-form-item label="商品缩略图">
-              <img :src="props.row.icon">
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="商品 ID"
-        prop="id"
-      />
-      <el-table-column
-        label="商品名称"
-        prop="name"
-      />
-      <el-table-column
-        label="创建时间"
-        prop="createTime"
-      />
-    </el-table>
+                <el-form-item label="商品名称">
+                  <span>{{ props.row.name }}</span>
+                </el-form-item>
+                <el-form-item label="商品 ID">
+                  <span>{{ props.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="门店 ID">
+                  <span>{{ props.row.storeId }}</span>
+                </el-form-item>
+                <el-form-item label="序列货号">
+                  <span>{{ props.row.serNum }}</span>
+                </el-form-item>
+                <el-form-item label="产品条码">
+                  <span>{{ props.row.barCode }}</span>
+                </el-form-item>
+                <el-form-item label="市场价或原价">
+                  <span>{{ props.row.originPrice }}</span>
+                </el-form-item>
+                <el-form-item label="商品分类 ID">
+                  <span>{{ props.row.catalogId }}</span>
+                </el-form-item>
+                <el-form-item label="商品描述">
+                  <span>{{ props.row.title }}</span>
+                </el-form-item>
+                <el-form-item label="规格">
+                  <span>{{ props.row.specification }}</span>
+                </el-form-item>
+                <el-form-item label="价格">
+                  <span>{{ props.row.price }}</span>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ props.row.createTime }}</span>
+                </el-form-item>
+                <el-form-item label="最后更新时间">
+                  <span>{{ props.row.lastUpdateTime }}</span>
+                </el-form-item>
+                <el-form-item label="其它信息">
+                  <el-tree
+                    :data="props.row.otherPropertyJson"
+                    :props="defaultProps"
+                    node-key="id"
+                  >
+                    <div
+                      slot-scope="{ node, data }"
+                      class="custom-tree-node"
+                    >
+                      {{ node.label }}
+                    </div>
+                  </el-tree>
+                </el-form-item>
+                <el-form-item label="商品缩略图">
+                  <img :src="props.row.icon">
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="商品 ID"
+            prop="id"
+          />
+          <el-table-column
+            label="商品名称"
+            prop="name"
+          />
+          <el-table-column
+            label="创建时间"
+            prop="createTime"
+          />
+        </el-table>
+      </el-col>
+    </el-row>
     <el-pagination
       :current-page="pageIndex"
       :page-sizes="pageSizes"
@@ -89,7 +105,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { parseTime, recursivelyParseObjectString } from '@/utils/index'
+import { parseTime, recursivelyParseObjectString, generateRandomString } from '@/utils'
 import local from './local'
 const viewName = 'productList'
 
@@ -100,7 +116,11 @@ export default {
       tableLoading: false,
       pageIndex: 1,
       pageSize: 10,
-      pageSizes: [10, 50, 100, 500]
+      pageSizes: [10, 50, 100, 500],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   computed: {
@@ -117,7 +137,7 @@ export default {
         return Object.assign({}, item, {
           createTime: parseTime(item.createTime),
           lastUpdateTime: parseTime(item.lastUpdateTime),
-          otherPropertyJson: recursivelyParseObjectString(item.otherPropertyJson),
+          otherPropertyJson: this.generateOtherInfoTree(recursivelyParseObjectString(item.otherPropertyJson)),
           price: `${item.price / 100} CNY`
         })
       })
@@ -151,6 +171,26 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
+    },
+    generateOtherInfoTree(obj) {
+      if (typeof obj !== 'object') {
+        const randomStr = generateRandomString(3)
+        return {
+          id: randomStr,
+          value: randomStr,
+          label: obj,
+          children: []
+        }
+      }
+      return Object.keys(obj).map(item => {
+        const randomStr = generateRandomString(3)
+        return {
+          id: randomStr,
+          value: randomStr,
+          label: item,
+          children: [this.generateOtherInfoTree(obj[item])]
+        }
+      })
     }
   }
 }
@@ -175,6 +215,13 @@ export default {
     width: 100%;
     img {
       max-width: 100%;
+    }
+    .custom-tree-node {
+      display: block;
+      width: 100%;
+      font-size: 14px;
+      word-wrap: break-word;
+      padding-right: 8px;
     }
   }
 }
