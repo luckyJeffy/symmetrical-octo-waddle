@@ -57,18 +57,16 @@
                   <span>{{ props.row.lastUpdateTime }}</span>
                 </el-form-item>
                 <el-form-item label="其它信息">
-                  <el-tree
-                    :data="props.row.otherPropertyJson"
-                    :props="defaultProps"
-                    node-key="id"
-                  >
-                    <div
-                      slot-scope="{ node, data }"
-                      class="custom-tree-node"
+                  <el-collapse>
+                    <el-collapse-item
+                      v-for="(value, key, index) in props.row.otherPropertyJson"
+                      :key="key"
+                      :title="key"
+                      :name="index"
                     >
-                      {{ node.label }}
-                    </div>
-                  </el-tree>
+                      <div>{{ value }}</div>
+                    </el-collapse-item>
+                  </el-collapse>
                 </el-form-item>
                 <el-form-item label="商品缩略图">
                   <img :src="props.row.icon">
@@ -105,7 +103,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { parseTime, recursivelyParseObjectString, generateRandomString } from '@/utils'
+import { parseTime, recursivelyParseObjectString } from '@/utils'
 import local from './local'
 const viewName = 'productList'
 
@@ -137,7 +135,7 @@ export default {
         return Object.assign({}, item, {
           createTime: parseTime(item.createTime),
           lastUpdateTime: parseTime(item.lastUpdateTime),
-          otherPropertyJson: this.generateOtherInfoTree(recursivelyParseObjectString(item.otherPropertyJson)),
+          otherPropertyJson: recursivelyParseObjectString(item.otherPropertyJson),
           price: `${item.price / 100} CNY`
         })
       })
@@ -171,26 +169,6 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-    },
-    generateOtherInfoTree(obj) {
-      if (typeof obj !== 'object') {
-        const randomStr = generateRandomString(3)
-        return {
-          id: randomStr,
-          value: randomStr,
-          label: obj,
-          children: []
-        }
-      }
-      return Object.keys(obj).map(item => {
-        const randomStr = generateRandomString(3)
-        return {
-          id: randomStr,
-          value: randomStr,
-          label: item,
-          children: [this.generateOtherInfoTree(obj[item])]
-        }
-      })
     }
   }
 }
@@ -204,24 +182,18 @@ export default {
   }
 }
 .table-expand {
-  font-size: 0;
+  font-size: 14px;
   label {
     width: 90px;
     color: #99a9bf;
   }
   .el-form-item {
+    margin-top: 10px;
     margin-right: 0;
     margin-bottom: 0;
     width: 100%;
     img {
       max-width: 100%;
-    }
-    .custom-tree-node {
-      display: block;
-      width: 100%;
-      font-size: 14px;
-      word-wrap: break-word;
-      padding-right: 8px;
     }
   }
 }
