@@ -58,18 +58,36 @@
                 </el-form-item>
                 <el-form-item label="其它信息">
                   <el-collapse>
-                    <el-collapse-item
-                      v-for="(value, key, index) in props.row.otherPropertyJson"
-                      :key="key"
-                      :title="key"
-                      :name="index"
-                    >
-                      <div>{{ value }}</div>
-                    </el-collapse-item>
+                    <el-row>
+                      <el-col
+                        v-for="(value, key, index) in props.row.otherPropertyJson"
+                        :key="key"
+                        :xs="24"
+                        :sm="24"
+                        :md="24"
+                        :lg="24"
+                        :xl="24"
+                      >
+                        <el-collapse-item
+                          :title="key"
+                          :name="index"
+                        >
+                          <div>{{ value }}</div>
+                        </el-collapse-item>
+                      </el-col>
+                      <el-col
+                        :xs="24"
+                        :sm="24"
+                        :md="24"
+                        :lg="24"
+                        :xl="24"
+                      >
+                        <el-collapse-item title="商品缩略图">
+                          <img :src="props.row.icon">
+                        </el-collapse-item>
+                      </el-col>
+                    </el-row>
                   </el-collapse>
-                </el-form-item>
-                <el-form-item label="商品缩略图">
-                  <img :src="props.row.icon">
                 </el-form-item>
               </el-form>
             </template>
