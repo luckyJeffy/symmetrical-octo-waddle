@@ -146,16 +146,12 @@ export default {
     ]),
     formattedProductList() {
       return JSON.parse(JSON.stringify(this.productList)).map(item => {
-        // 替换为 null 的健值
-        Object.keys(item).map(keyName => {
-          item[keyName] = item[keyName] === null ? '暂无数据' : item[keyName]
-        })
-        return Object.assign({}, item, {
+        return this.filterNullValue(Object.assign({}, item, {
           createTime: parseTime(item.createTime),
           lastUpdateTime: parseTime(item.lastUpdateTime),
-          otherPropertyJson: recursivelyParseObjectString(item.otherPropertyJson),
+          otherPropertyJson: this.filterNullValue(recursivelyParseObjectString(item.otherPropertyJson)),
           price: `${item.price / 100} CNY`
-        })
+        }))
       })
     }
   },
@@ -187,6 +183,15 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
+    },
+    filterNullValue(obj) {
+      // deep clone
+      const tmpObject = JSON.parse(JSON.stringify(obj))
+      // 替换为 null 的键值
+      Object.keys(tmpObject).map(keyName => {
+        tmpObject[keyName] = tmpObject[keyName] === null || !tmpObject[keyName] === true ? '暂无数据' : tmpObject[keyName]
+      })
+      return tmpObject
     }
   }
 }
