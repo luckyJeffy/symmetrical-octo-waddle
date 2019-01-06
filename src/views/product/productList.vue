@@ -1,6 +1,7 @@
 <template>
   <div class="product-list-container">
     <el-table
+      v-loading="tableLoading"
       :data="productList"
       style="width: 100%"
     >
@@ -72,6 +73,7 @@ export default {
   name: 'RouterBoard',
   data() {
     return {
+      tableLoading: false,
       pageIndex: 1,
       pageSize: 10,
       pageSizes: [10, 50, 100, 500]
@@ -84,11 +86,15 @@ export default {
     ])
   },
   watch: {
-    pageIndex(newValue, oldValue) {
-      this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+    async pageIndex(newValue, oldValue) {
+      this.tableLoading = true
+      await this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+      this.tableLoading = false
     },
-    pageSize(newValue, oldValue) {
-      this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': newValue })
+    async pageSize(newValue, oldValue) {
+      this.tableLoading = true
+      await this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': newValue })
+      this.tableLoading = false
     }
   },
   created() {
@@ -115,6 +121,9 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .product-list-container {
   padding: 10px;
+  el-pagination {
+    width: 100%;
+  }
 }
 .table-expand {
   font-size: 0;
