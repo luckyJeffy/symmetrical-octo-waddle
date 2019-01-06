@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getRSAPublicKey() {
   return request({
-    url: '/console/v01//getRSAPublicKey.do',
+    url: '/console/v01/getRSAPublicKey.do',
     method: 'get'
   })
 }
@@ -39,7 +39,7 @@ export function logout() {
 
 export function getUserInfo(accessToken) {
   return request({
-    url: '/console/v01/getConsoleUserAccountByToken.do',
+    url: '/console/v01/checkAccessToken.do',
     method: 'post',
     data: { accessToken }
   })
