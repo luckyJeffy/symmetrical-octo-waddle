@@ -131,8 +131,8 @@ export default {
     return {
       tableLoading: false,
       pageIndex: 1,
-      pageSize: 10,
-      pageSizes: [10, 50, 100, 500],
+      pageSize: 20,
+      pageSizes: [20, 50, 100, 500],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -200,8 +200,9 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .product-list-container {
   padding: 10px;
-  el-pagination {
-    width: 100%;
+  .el-pagination {
+    padding: 10px 5px;
+    white-space: normal;
   }
 }
 .table-expand {
