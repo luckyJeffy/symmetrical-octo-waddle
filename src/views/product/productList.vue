@@ -51,11 +51,20 @@
         prop="title"
       />
     </el-table>
+    <el-pagination
+      :current-page="pageIndex"
+      :page-sizes="pageSizes"
+      :page-size="pageSize"
+      :total="totalCount"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import local from './local'
 const viewName = 'productList'
 
@@ -63,24 +72,41 @@ export default {
   name: 'RouterBoard',
   data() {
     return {
-      productsInfo: []
+      pageIndex: 1,
+      pageSize: 10,
+      pageSizes: [10, 50, 100, 500]
     }
   },
   computed: {
     ...mapGetters([
-      'productList'
+      'productList',
+      'totalCount'
     ])
+  },
+  watch: {
+    pageIndex(newValue, oldValue) {
+      this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+    },
+    pageSize(newValue, oldValue) {
+      this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': newValue })
+    }
   },
   created() {
     if (!this.$i18n.getLocaleMessage('en')[viewName]) {
       this.$i18n.mergeLocaleMessage('en', local.en)
       this.$i18n.mergeLocaleMessage('zh', local.zh)
     }
-    this.$store.dispatch('GetProductInfo')
+    this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
   },
   methods: {
-    getProductInfo() {
-      this.$store.dispatch('GetProductInfo')
+    ...mapActions({
+      'getProductInfo': 'GetProductInfo'
+    }),
+    handleCurrentChange(val) {
+      this.pageIndex = val
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
     }
   }
 }

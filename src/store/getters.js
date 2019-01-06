@@ -15,6 +15,7 @@ const getters = {
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs,
-  productList: state => state.product.list
+  productList: state => state.product.list,
+  totalCount: state => state.product.totalCount
 }
 export default getters

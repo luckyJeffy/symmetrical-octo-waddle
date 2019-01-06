@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export function getProductInfo(id, storeId) {
+export function getProductInfo(pageNo, pageSize) {
   return request({
     url: '/biz/v01/listBizProductWithoutToken.do',
     method: 'post',
-    data: { id, storeId }
+    data: { pageNo, pageSize }
   })
 }

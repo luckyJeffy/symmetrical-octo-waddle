@@ -20,9 +20,9 @@ const user = {
   },
 
   actions: {
-    GetProductInfo({ commit }, pageIndex) {
+    GetProductInfo({ commit }, { pageIndex, pageSize }) {
       return new Promise((resolve, reject) => {
-        getProductInfo()
+        getProductInfo(pageIndex, pageSize)
           .then(response => {
             console.log(response)
             const data = response.data
