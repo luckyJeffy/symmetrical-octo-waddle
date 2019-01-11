@@ -152,6 +152,15 @@ export const asyncRouterMap = [
           title: 'productList',
           roles: ['admin']
         }
+      },
+      {
+        path: 'complexList',
+        component: () => import('@/views/product/list'),
+        name: 'list',
+        meta: {
+          title: 'list',
+          roles: ['admin']
+        }
       }
     ]
   },

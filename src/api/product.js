@@ -7,3 +7,11 @@ export function getProductInfo(pageNo, pageSize) {
     data: { pageNo, pageSize }
   })
 }
+
+export function updateProductInfo(product) {
+  return request({
+    url: '/biz/v01/updateBizProduct.do',
+    method: 'post',
+    data: product
+  })
+}
