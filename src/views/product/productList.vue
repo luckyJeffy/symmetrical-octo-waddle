@@ -1,6 +1,22 @@
 <template>
-  <div class="product-list-container">
+  <div class="container">
     <el-row>
+      <el-col
+        :xs="24"
+        :sm="24"
+        :md="24"
+        :lg="24"
+        :xl="24"
+      >
+        <div class="filter-container">
+          <el-input
+            v-model="search"
+            placeholder="请输入商品名称"
+            style="width: 200px;"
+            @keyup.enter.native="handleFilter"
+          />
+        </div>
+      </el-col>
       <el-col
         :xs="24"
         :sm="24"
@@ -126,7 +142,7 @@ import local from './local'
 const viewName = 'productList'
 
 export default {
-  name: 'RouterBoard',
+  name: 'ProductList',
   data() {
     return {
       tableLoading: false,
@@ -136,7 +152,8 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      search: ''
     }
   },
   computed: {
@@ -176,7 +193,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      'getProductInfo': 'GetProductInfo'
+      'getProductInfo': 'GetProductInfo',
+      'searchProductInfo': 'SearchProductInfo'
     }),
     handleCurrentChange(val) {
       this.pageIndex = val
@@ -192,13 +210,20 @@ export default {
         tmpObject[keyName] = tmpObject[keyName] === null || !tmpObject[keyName] === true ? '暂无数据' : tmpObject[keyName]
       })
       return tmpObject
+    },
+    handleFilter() {
+      if (!this.search) {
+        this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+        return
+      }
+      this.searchProductInfo(this.search)
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.product-list-container {
+.container {
   padding: 10px;
   .el-pagination {
     padding: 10px 5px;

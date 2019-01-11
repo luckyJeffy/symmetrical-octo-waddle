@@ -1,11 +1,8 @@
-
 export default {
   zh: {
-    productList: {
-    }
+    productList: {}
   },
   en: {
-    productList: {
-    }
+    productList: {}
   }
 }

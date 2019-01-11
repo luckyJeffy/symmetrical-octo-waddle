@@ -15,3 +15,11 @@ export function updateProductInfo(product) {
     data: product
   })
 }
+
+export function searchProductInfo(value) {
+  return request({
+    url: 'biz/v01/listBizDrug.do',
+    method: 'post',
+    data: { name: value }
+  })
+}
