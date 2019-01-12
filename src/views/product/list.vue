@@ -246,9 +246,9 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.morePics = this.temp.morePics === null ? [] : this.temp.morePics
       const pics = this.temp.morePics
-      if (pics) {
+      if (pics && pics !== '') {
         this.temp.morePics = pics.split(',')
-      } else if (pics === null && !pics === true) {
+      } else {
         this.temp.morePics = []
       }
       console.log(this.temp.morePics)
@@ -257,7 +257,7 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleModifyStatus(event) {
+    handleModifyStatus() {
       const product = Object.assign({}, this.temp)
       product.otherPropertyJson = JSON.stringify(product.otherPropertyJson)
       product.morePics = product.morePics.join(',')
