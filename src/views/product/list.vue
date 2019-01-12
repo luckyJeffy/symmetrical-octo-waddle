@@ -8,9 +8,13 @@
         :lg="24"
         :xl="24"
       >
+        <div class="filter-container">
+          <el-input v-model="listQuery.name" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+        </div>
         <el-table
           v-loading="tableLoading"
-          :data="formattedProductList"
+          :data="productList"
           border
           fit
           highlight-current-row
@@ -48,7 +52,7 @@
           </el-table-column>
           <el-table-column label="状态" class-name="status-col" width="100">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status | statusFilter }}</el-tag>
+              <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status | statusInfoFilter }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
@@ -80,6 +84,17 @@
         </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="temp.title"/>
+        </el-form-item>
+        <el-form-item label="icon" prop="title">
+          <el-upload
+            :headers="uploadHeaders"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            class="avatar-uploader"
+            action="/api/file/v01/fileUpload.do?savePath=imageydtest.vrdete.com">
+            <img v-if="temp.icon" :src="temp.icon" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          </el-upload>
         </el-form-item>
         <el-form-item label="图片" prop="title">
           <el-upload
@@ -123,6 +138,14 @@ export default {
       }
       return statusMap[status]
     },
+    statusInfoFilter(status) {
+      const statusMap = {
+        0: '正常',
+        1: 'info',
+        9: '禁用'
+      }
+      return statusMap[status]
+    },
     picsFilter(list) {
       const urls = []
       for (const url of list) {
@@ -154,6 +177,9 @@ export default {
       },
       rules: {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
+      },
+      listQuery: {
+        name: ''
       }
     }
   },
@@ -198,7 +224,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      'getProductInfo': 'GetProductInfo'
+      'getProductInfo': 'GetProductInfo',
+      'searchProductInfo': 'SearchProductInfo'
     }),
     handleCurrentChange(val) {
       this.pageIndex = val
@@ -235,17 +262,35 @@ export default {
       product.otherPropertyJson = JSON.stringify(product.otherPropertyJson)
       product.morePics = product.morePics.join(',')
       updateProductInfo(product).then(res => {
-        if (res.data) {
+        if (res.data.resultCode === '200') {
           this.$message({
-            message: '操作成功',
+            message: '修改成功',
             type: 'success'
           })
+          this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
           this.dialogFormVisible = false
+        } else {
+          this.$message({
+            message: '修改失败',
+            type: 'error'
+          })
         }
       })
     },
     handleProductRemove(prod) {
       console.log(prod)
+    },
+    handleAvatarSuccess(response, file) {
+      const res = response[0]
+      if (res.resultCode !== '200') {
+        this.$message({
+          message: '上传失败',
+          type: 'error'
+        })
+        return
+      }
+      this.temp.icon = `http://${res.url}`
+      console.log('icon', this.temp.icon)
     },
     handleFileRemove(file) {
       const index = this.temp.morePics.indexOf(file.url)
@@ -264,6 +309,15 @@ export default {
       }
       this.temp.morePics.push(`http://${res.url}`)
       console.log(this.temp.morePics)
+    },
+    handleFilter() {
+      console.log(this.listQuery.name)
+      const search = this.listQuery.name
+      if (!search) {
+        this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+        return
+      }
+      this.searchProductInfo(search)
     }
   }
 }
@@ -293,4 +347,9 @@ export default {
     }
   }
 }
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

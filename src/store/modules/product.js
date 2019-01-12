@@ -45,6 +45,8 @@ const user = {
           commit('SET_TOTAL_PAGE', data.totalPage)
           commit('SET_TOTAL_COUNT', data.totalCount)
           resolve()
+        }).catch(e => {
+          reject(e)
         })
       })
     }
