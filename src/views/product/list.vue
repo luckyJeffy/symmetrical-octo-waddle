@@ -45,6 +45,12 @@
               <span>{{ scope.row.serNum }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="图标" width="80" align="center">
+            <template slot-scope="scope">
+              <img v-if="scope.row.icon" :src="scope.row.icon" class="prodicon">
+              <span v-else>暂无图片</span>
+            </template>
+          </el-table-column>
           <el-table-column label="商品描述" min-width="110px" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.title }}</span>
@@ -83,9 +89,13 @@
           <el-input v-model="temp.price"/>
         </el-form-item>
         <el-form-item label="标题" prop="title">
-          <el-input v-model="temp.title"/>
+          <el-input
+            v-model="temp.title"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="请输入内容"/>
         </el-form-item>
-        <el-form-item label="icon" prop="title">
+        <el-form-item label="icon" prop="icon">
           <el-upload
             :headers="uploadHeaders"
             :show-file-list="false"
@@ -96,7 +106,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
-        <el-form-item label="图片" prop="title">
+        <el-form-item label="图片" prop="morePics">
           <el-upload
             :headers="uploadHeaders"
             :on-success="handleFilePreview"
@@ -107,6 +117,9 @@
             list-type="picture">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
+        </el-form-item>
+        <el-form-item label="序列号" prop="serNum">
+          <el-input v-model="temp.serNum"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -259,7 +272,6 @@ export default {
     },
     handleModifyStatus() {
       const product = Object.assign({}, this.temp)
-      product.otherPropertyJson = JSON.stringify(product.otherPropertyJson)
       product.morePics = product.morePics.join(',')
       updateProductInfo(product).then(res => {
         if (res.data.resultCode === '200') {
@@ -351,5 +363,10 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
-  }
+}
+.prodicon{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 </style>
