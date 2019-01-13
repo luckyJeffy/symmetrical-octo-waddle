@@ -5,6 +5,7 @@ import errorLog from './modules/errorLog'
 import permission from './modules/permission'
 import user from './modules/user'
 import product from './modules/product'
+import catalog from './modules/catalog'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     errorLog,
     permission,
     user,
-    product
+    product,
+    catalog
   },
   getters
 })

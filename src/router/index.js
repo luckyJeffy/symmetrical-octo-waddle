@@ -166,6 +166,29 @@ export const asyncRouterMap = [
   },
 
   {
+    path: '/catalog',
+    component: Layout,
+    redirect: '/catalog/index',
+    alwaysShow: true,
+    meta: {
+      title: '分类',
+      icon: 'tree',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/catalog/index'),
+        name: 'catalogList',
+        meta: {
+          title: '分类列表',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',

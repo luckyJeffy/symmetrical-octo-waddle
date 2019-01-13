@@ -105,8 +105,8 @@ export default {
     return {
       captchaUrl: '/api/console/v01/kaptcha/kaptcha.jpg',
       loginForm: {
-        username: '13662685556',
-        password: '123456',
+        username: '',
+        password: '',
         captcha: ''
       },
       loginRules: {
