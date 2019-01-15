@@ -130,6 +130,17 @@ export const asyncRouterMap = [
           title: '产品列表',
           roles: ['admin']
         }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/product/edit'),
+        name: 'ProductEdit',
+        hidden: true,
+        meta: {
+          title: 'productEdit',
+          roles: ['admin'],
+          noCache: true
+        }
       }
     ]
   },

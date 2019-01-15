@@ -63,8 +63,11 @@
           </el-table-column>
           <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button type="danger" size="mini" @click="handleProductRemove(scope.row)">删除</el-button>
+              <router-link :to="'/product/edit/'+scope.row.id">
+                <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
+              </router-link>
+              <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

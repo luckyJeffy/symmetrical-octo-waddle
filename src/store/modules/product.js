@@ -5,6 +5,7 @@ const user = {
     list: [],
     totalPage: 0,
     totalCount: 0
+    // details: {}
   },
 
   mutations: {
@@ -17,6 +18,9 @@ const user = {
     SET_TOTAL_COUNT: (state, num) => {
       state.totalCount = num
     }
+    // SET_DETAILS: (state, details) => {
+    //   state.totalCount = details
+    // }
   },
 
   actions: {
@@ -24,7 +28,6 @@ const user = {
       return new Promise((resolve, reject) => {
         getProductInfo(pageIndex, pageSize)
           .then(response => {
-            console.log(response)
             const data = response.data
             commit('SET_LIST', data.list)
             commit('SET_TOTAL_PAGE', data.totalPage)
@@ -39,7 +42,6 @@ const user = {
     SearchProductInfo({ commit }, value) {
       return new Promise((resolve, reject) => {
         searchProductInfo(value).then(response => {
-          console.log(response)
           const data = response.data
           commit('SET_LIST', data.list)
           commit('SET_TOTAL_PAGE', data.totalPage)
@@ -50,6 +52,17 @@ const user = {
         })
       })
     }
+    // GetProductDetails({ commit }, id) {
+    //   return new Promise((resolve, reject) => {
+    //     getProductDetails(id).then(response => {
+    //       const data = response.data
+    //       commit('SET_DETAILS', data)
+    //       resolve()
+    //     }).catch(e => {
+    //       reject(e)
+    //     })
+    //   })
+    // }
   }
 }
 

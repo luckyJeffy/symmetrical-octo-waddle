@@ -23,3 +23,11 @@ export function searchProductInfo(value) {
     data: { name: value }
   })
 }
+
+export function getProductDetails(id) {
+  return request({
+    url: '/biz/v01/getBizProductWithoutToken.do',
+    method: 'post',
+    data: { id }
+  })
+}
