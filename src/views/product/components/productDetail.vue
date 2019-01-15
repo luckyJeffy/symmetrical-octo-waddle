@@ -3,53 +3,19 @@
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
 
       <sticky :class-name="'sub-navbar '+postForm.status">
-        <CommentDropdown v-model="postForm.comment_disabled" />
-        <PlatformDropdown v-model="postForm.platforms" />
-        <SourceUrlDropdown v-model="postForm.source_uri" />
+        <el-button v-loading="loading" type="warning" @click="draftForm">取消</el-button>
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">发布
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="draftForm">草稿</el-button>
       </sticky>
 
       <div class="createPost-main-container">
         <el-row>
-
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
-              <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
+            <el-form-item style="margin-bottom: 40px;" prop="name">
+              <MDinput v-model="postForm.name" :maxlength="100" name="name" required>
                 名称
               </MDinput>
             </el-form-item>
-
-            <!-- <div class="postInfo-container">
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable remote placeholder="搜索用户">
-                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item"/>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="10">
-                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"/>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="6">
-                  <el-form-item label-width="60px" label="重要性:" class="postInfo-container-item">
-                    <el-rate
-                      v-model="postForm.importance"
-                      :max="3"
-                      :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                      :low-threshold="1"
-                      :high-threshold="3"
-                      style="margin-top:8px;"/>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div> -->
 
             <div class="postInfo-container">
               <el-row>
@@ -94,12 +60,13 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
-                    <el-cascader
-                      :options="catalogOptions"
-                      placeholder="请选择分类"
-                      filterable
-                      change-on-select
-                    />
+                    <el-select v-model="postForm.catalogId" filterable placeholder="请选择">
+                      <el-option
+                        v-for="item in catalogList"
+                        :key="item.value"
+                        :label="item.nodeName"
+                        :value="item.catalogId"/>
+                    </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -112,12 +79,16 @@
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
         </el-form-item>
 
-        <div class="editor-container">
-          <Tinymce ref="editor" :height="400" v-model="postForm.content" />
+        <div style="margin-bottom: 20px;">
+          <Upload v-model="postForm.icon" />
         </div>
 
         <div style="margin-bottom: 20px;">
-          <Upload v-model="postForm.image_uri" />
+          <Pics v-model="postForm.morePics" />
+        </div>
+
+        <div class="editor-container">
+          <Tinymce ref="editor" :height="400" v-model="postForm.richDescription" />
         </div>
       </div>
     </el-form>
@@ -127,27 +98,16 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import Upload from '@/components/Upload/singleImage3'
+import Upload from '@/components/Upload/zytIconUpload'
+import Pics from '@/components/Upload/zytPicsUpload'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { validateURL } from '@/utils/validate'
+// import { validateURL } from '@/utils/validate'
 import { getProductDetails } from '@/api/product'
 import { userSearch } from '@/api/remoteSearch'
+import { fetchCatalogList } from '@/api/catalog'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
-
-// const defaultForm = {
-//   status: 'draft',
-//   title: '', // 文章题目
-//   content: '', // 文章内容
-//   content_short: '', // 文章摘要
-//   source_uri: '', // 文章外链
-//   image_uri: '', // 文章图片
-//   display_time: undefined, // 前台展示时间
-//   id: undefined,
-//   platforms: ['a-platform'],
-//   comment_disabled: false,
-//   importance: 0
-// }
+import { updateProductInfo } from '@/api/product'
 
 const defaultForm = {
   id: '',
@@ -190,24 +150,9 @@ const unitOptions = [
   }
 ]
 
-const catalogEval = function(data) {
-  const tmp = []
-  Array.from(data).forEach(function(record) {
-    const catalog = {
-      value: record.id,
-      label: record.nodeName
-    }
-    if (record.bizCatalog && record.bizCatalog.length > 0) {
-      catalog.children = record.bizCatalog
-    }
-    tmp.push(catalog)
-  })
-  return tmp
-}
-
 export default {
   name: 'ProductDetail',
-  components: { Tinymce, MDinput, Upload, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Upload, Pics, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
   props: {
     isEdit: {
       type: Boolean,
@@ -226,45 +171,25 @@ export default {
         callback()
       }
     }
-    const validateSourceUri = (rule, value, callback) => {
-      if (value) {
-        if (validateURL(value)) {
-          callback()
-        } else {
-          this.$message({
-            message: '外链url填写不正确',
-            type: 'error'
-          })
-          callback(new Error('外链url填写不正确'))
-        }
-      } else {
-        callback()
-      }
-    }
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
-        title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+        // image_uri: [{ validator: validateRequire }],
+        name: [{ validator: validateRequire }]
+        // content: [{ validator: validateRequire }],
+        // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
       unitOption: unitOptions,
-      catalogOptions: []
+      catalogList: []
     }
   },
   computed: {
     contentShortLength() {
       return this.postForm.title.length
     }
-    // catalogOptions() {
-    //   const catalogs = this.$store.state.catalog.list
-    //   debugger
-    //   return catalogEval(catalogs)
-    // }
   },
   created() {
     if (this.isEdit) {
@@ -282,36 +207,45 @@ export default {
   },
   mounted() {
     this.$store.dispatch('FetchCatalogList', { 'pageIndex': 1, 'pageSize': 100 }).then(() => {
-      this.catalogOptions = catalogEval(this.$store.state.catalog.list)
-      debugger
+      this.fetchcatalog()
     })
   },
   methods: {
-    async fetchCatalog() {
-      await this.$store.dispatch('FetchCatalogList')
+    fetchcatalog() {
+      fetchCatalogList().then(res => {
+        const data = res.data
+        this.catalogList = data.list
+      })
     },
     fetchData(id) {
       getProductDetails(id).then(response => {
-        this.postForm = response.data
-        console.log(this.postForm)
+        this.postForm = Object.assign({}, this.postForm, response.data)
       }).catch(err => {
-        console.log(err)
+        console.error('Page: productDetail methods: fetchData :', err)
       })
     },
     submitForm() {
-      console.log(this.postForm)
-      this.postForm.display_time = parseInt(this.display_time / 1000)
+      const product = Object.assign({}, this.postForm)
+      debugger
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
+          updateProductInfo(product).then(res => {
+            if (res.data.resultCode === '200') {
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.postForm.status = 'published'
+              this.loading = false
+            } else {
+              this.$message({
+                message: '修改失败',
+                type: 'error'
+              })
+            }
           })
-          this.postForm.status = 'published'
-          this.loading = false
         } else {
           console.log('error submit!!')
           return false
