@@ -123,7 +123,7 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'complexList',
+        path: 'list',
         component: () => import('@/views/product/list'),
         name: 'productList',
         meta: {

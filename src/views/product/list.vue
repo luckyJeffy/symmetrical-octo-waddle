@@ -124,6 +124,24 @@
         <el-form-item label="序列号" prop="serNum">
           <el-input v-model="temp.serNum"/>
         </el-form-item>
+        <el-form-item label="分类" prop="catalog">
+          <el-select v-model="temp.catalogId" filterable placeholder="请选择">
+            <el-option
+              v-for="item in catalogList"
+              :key="item.value"
+              :label="item.nodeName"
+              :value="item.catalogId"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="temp.status" filterable placeholder="请选择">
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
@@ -138,6 +156,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { parseTime, recursivelyParseObjectString } from '@/utils'
 import { updateProductInfo } from '@/api/product'
+import { fetchCatalogList } from '@/api/catalog'
 import local from './local'
 import Dropzone from '@/components/Dropzone'
 const viewName = 'productList'
@@ -184,19 +203,31 @@ export default {
         label: 'label'
       },
       dialogFormVisible: false,
+      catalogList: [],
       temp: {
         id: undefined,
         name: '',
         title: '',
         price: 0,
-        morePics: []
+        morePics: [],
+        catalogId: 0
       },
       rules: {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
       listQuery: {
         name: ''
-      }
+      },
+      statusList: [
+        {
+          label: '正常',
+          value: 0
+        },
+        {
+          label: '禁用',
+          value: 9
+        }
+      ]
     }
   },
   computed: {
@@ -237,12 +268,19 @@ export default {
       this.$i18n.mergeLocaleMessage('zh', local.zh)
     }
     this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+    this.fetchcatalog()
   },
   methods: {
     ...mapActions({
       'getProductInfo': 'GetProductInfo',
       'searchProductInfo': 'SearchProductInfo'
     }),
+    fetchcatalog() {
+      fetchCatalogList().then(res => {
+        const data = res.data
+        this.catalogList = data.list
+      })
+    },
     handleCurrentChange(val) {
       this.pageIndex = val
     },
