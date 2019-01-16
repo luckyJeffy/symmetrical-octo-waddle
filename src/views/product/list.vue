@@ -67,7 +67,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
               </router-link>
               <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
+              <el-button v-if="scope.row.status === 0" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
+              <el-button v-if="scope.row.status === 9" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRestore(scope.row)">恢复</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -155,7 +156,7 @@
 'use strict'
 import { mapGetters, mapActions } from 'vuex'
 import { parseTime, recursivelyParseObjectString } from '@/utils'
-import { updateProductInfo } from '@/api/product'
+import { updateProductInfo, deleteProduct, restoreBizProduct } from '@/api/product'
 import { fetchCatalogList } from '@/api/catalog'
 import local from './local'
 import Dropzone from '@/components/Dropzone'
@@ -331,7 +332,46 @@ export default {
       })
     },
     handleProductRemove(prod) {
-      console.log(prod)
+      const self = this
+      self.$confirm('是否禁用该产品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteProduct(prod.id).then(res => {
+          console.log(res)
+          if (res.data.resultCode === '200') {
+            self.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            self.handleFilter()
+          }
+        }).catch(e => {
+          console.error(e)
+        })
+      })
+    },
+    handleProductRestore(prod) {
+      const self = this
+      self.$confirm('是否恢复该产品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        restoreBizProduct(prod.id).then(res => {
+          console.log(res)
+          if (res.data.resultCode === '200') {
+            self.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            self.handleFilter()
+          }
+        }).catch(e => {
+          console.error(e)
+        })
+      })
     },
     handleAvatarSuccess(response, file) {
       const res = response[0]

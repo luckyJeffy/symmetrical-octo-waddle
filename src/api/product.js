@@ -31,3 +31,21 @@ export function getProductDetails(id) {
     data: { id }
   })
 }
+
+// 逻辑删除
+export function deleteProduct(id) {
+  return request({
+    url: '/biz/v01/deleteBizProduct.do',
+    method: 'post',
+    data: { id }
+  })
+}
+
+// 取消逻辑删除
+export function restoreBizProduct(id) {
+  return request({
+    url: '/biz/v01/restoreBizProduct.do',
+    method: 'post',
+    data: { id }
+  })
+}
