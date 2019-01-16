@@ -114,7 +114,7 @@ export const asyncRouterMap = [
   {
     path: '/product',
     component: Layout,
-    redirect: '/product/complexList',
+    redirect: '/product/list',
     alwaysShow: true,
     meta: {
       title: '产品',
@@ -132,12 +132,32 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'create',
+        component: () => import('@/views/product/create'),
+        name: 'productCreate',
+        meta: {
+          title: '发布产品',
+          roles: ['admin']
+        }
+      },
+      {
         path: 'edit/:id',
         component: () => import('@/views/product/edit'),
         name: 'ProductEdit',
         hidden: true,
         meta: {
           title: 'productEdit',
+          roles: ['admin'],
+          noCache: true
+        }
+      },
+      {
+        path: 'create',
+        component: () => import('@/views/product/create'),
+        name: 'ProductCreate',
+        hidden: true,
+        meta: {
+          title: 'productCreate',
           roles: ['admin'],
           noCache: true
         }

@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 获取产品列表
 export function getProductInfo(pageNo, pageSize) {
   return request({
     url: '/biz/v01/listBizProductWithoutToken.do',
@@ -8,6 +9,7 @@ export function getProductInfo(pageNo, pageSize) {
   })
 }
 
+// 更新产品
 export function updateProductInfo(product) {
   return request({
     url: '/biz/v01/updateBizProduct.do',
@@ -16,6 +18,16 @@ export function updateProductInfo(product) {
   })
 }
 
+// 新增产品
+export function addProductInfo(product) {
+  return request({
+    url: '/biz/v01/insertBizProduct.do',
+    method: 'post',
+    data: product
+  })
+}
+
+// 搜索产品
 export function searchProductInfo(value) {
   return request({
     url: 'biz/v01/listBizDrug.do',
@@ -24,6 +36,7 @@ export function searchProductInfo(value) {
   })
 }
 
+// 产品详情
 export function getProductDetails(id) {
   return request({
     url: '/biz/v01/getBizProductWithoutToken.do',

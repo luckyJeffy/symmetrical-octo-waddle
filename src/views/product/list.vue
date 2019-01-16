@@ -11,6 +11,9 @@
         <div class="filter-container">
           <el-input v-model="listQuery.name" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+          <router-link to="/product/create">
+            <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
+          </router-link>
         </div>
         <el-table
           v-loading="tableLoading"

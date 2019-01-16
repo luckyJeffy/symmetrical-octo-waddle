@@ -1,13 +1,11 @@
 <template>
   <div class="createPost-container">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
-
       <sticky :class-name="'sub-navbar '+postForm.status">
-        <el-button v-loading="loading" type="warning" @click="draftForm">取消</el-button>
+        <el-button v-loading="loading" type="warning" @click="cancel">取消</el-button>
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">发布
         </el-button>
       </sticky>
-
       <div class="createPost-main-container">
         <el-row>
           <el-col :span="24">
@@ -16,7 +14,6 @@
                 名称
               </MDinput>
             </el-form-item>
-
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
@@ -73,41 +70,39 @@
             </div>
           </el-col>
         </el-row>
-
         <el-form-item style="margin-bottom: 40px;" label-width="45px" label="摘要:">
           <el-input :rows="1" v-model="postForm.title" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
         </el-form-item>
-
         <div style="margin-bottom: 20px;">
           <Upload v-model="postForm.icon" />
         </div>
-
         <div style="margin-bottom: 20px;">
           <Pics v-model="postForm.morePics" />
         </div>
-
+        <div v-if="false" style="margin-bottom: 20px;">
+          <other-property-json v-model="postForm.otherPropertyJson" />
+        </div>
         <div class="editor-container">
           <Tinymce ref="editor" :height="400" v-model="postForm.richDescription" />
         </div>
       </div>
     </el-form>
-
   </div>
 </template>
 
 <script>
 import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/zytIconUpload'
+import OtherPropertyJson from '@/components/OtherPropertyJson/otherPropertyJson'
 import Pics from '@/components/Upload/zytPicsUpload'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 // import { validateURL } from '@/utils/validate'
-import { getProductDetails } from '@/api/product'
+import { getProductDetails, updateProductInfo, addProductInfo } from '@/api/product'
 import { userSearch } from '@/api/remoteSearch'
 import { fetchCatalogList } from '@/api/catalog'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
-import { updateProductInfo } from '@/api/product'
 
 const defaultForm = {
   id: '',
@@ -123,9 +118,9 @@ const defaultForm = {
   morePics: '', // 更多图片
   description: '', // 纯文本简介
   richDescription: '', // 富文本简介
-  otherPropertyJson: {}, // 更多属性
-  status: '', // 状态 0正常 9删除/禁用
-  storeId: '', // 门店id
+  otherPropertyJson: '{}', // 更多属性
+  status: 0, // 状态 0正常 9删除/禁用
+  storeId: '0', // 门店id
   lastUpdator: '',
   createTime: '',
   lastUpdateTime: ''
@@ -152,7 +147,17 @@ const unitOptions = [
 
 export default {
   name: 'ProductDetail',
-  components: { Tinymce, MDinput, Upload, Pics, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Upload, Pics, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown, OtherPropertyJson },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        0: 'success',
+        1: 'info',
+        9: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   props: {
     isEdit: {
       type: Boolean,
@@ -176,7 +181,7 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        // image_uri: [{ validator: validateRequire }],
+        price: [{ validator: validateRequire }],
         name: [{ validator: validateRequire }]
         // content: [{ validator: validateRequire }],
         // source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
@@ -226,10 +231,15 @@ export default {
     },
     submitForm() {
       const product = Object.assign({}, this.postForm)
-      debugger
+      let submitPostAPI
+      if (product.id === '') {
+        submitPostAPI = addProductInfo
+      } else {
+        submitPostAPI = updateProductInfo
+      }
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          updateProductInfo(product).then(res => {
+          submitPostAPI(product).then(res => {
             if (res.data.resultCode === '200') {
               this.$notify({
                 title: '成功',
@@ -252,21 +262,9 @@ export default {
         }
       })
     },
-    draftForm() {
-      if (this.postForm.title.length === 0) {
-        this.$message({
-          message: '请填写必要的标题和内容',
-          type: 'warning'
-        })
-        return
-      }
-      this.$message({
-        message: '保存成功',
-        type: 'success',
-        showClose: true,
-        duration: 1000
-      })
-      this.postForm.status = 'draft'
+
+    cancel() {
+      this.$router.push({ path: '/product/list' })
     },
     getRemoteUserList(query) {
       userSearch(query).then(response => {
