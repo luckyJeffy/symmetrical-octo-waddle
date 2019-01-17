@@ -247,8 +247,8 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.postForm.status = 'published'
               this.loading = false
+              this.$router.push({ path: '/product' })
             } else {
               this.$message({
                 message: '修改失败',

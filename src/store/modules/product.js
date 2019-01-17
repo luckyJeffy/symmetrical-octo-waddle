@@ -1,4 +1,4 @@
-import { getProductInfo, searchProductInfo } from '@/api/product'
+import { getProductInfo, searchProductInfo, queryProduct } from '@/api/product'
 
 const user = {
   state: {
@@ -42,6 +42,19 @@ const user = {
     SearchProductInfo({ commit }, value) {
       return new Promise((resolve, reject) => {
         searchProductInfo(value).then(response => {
+          const data = response.data
+          commit('SET_LIST', data.list)
+          commit('SET_TOTAL_PAGE', data.totalPage)
+          commit('SET_TOTAL_COUNT', data.totalCount)
+          resolve()
+        }).catch(e => {
+          reject(e)
+        })
+      })
+    },
+    QueryProductCatalog({ commit }, value) {
+      return new Promise((resolve, reject) => {
+        queryProduct(value).then(response => {
           const data = response.data
           commit('SET_LIST', data.list)
           commit('SET_TOTAL_PAGE', data.totalPage)

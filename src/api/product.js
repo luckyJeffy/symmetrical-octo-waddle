@@ -36,6 +36,15 @@ export function searchProductInfo(value) {
   })
 }
 
+// query by catalogId
+export function queryProduct(id) {
+  return request({
+    url: 'biz/v01/selectProductWithoutToken.do',
+    method: 'post',
+    data: { catalogId: id }
+  })
+}
+
 // 产品详情
 export function getProductDetails(id) {
   return request({

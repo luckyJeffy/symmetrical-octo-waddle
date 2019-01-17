@@ -14,6 +14,13 @@
           <router-link to="/product/create">
             <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
           </router-link>
+          <el-select v-model="listQuery.catalog" class="filter-item query-select" filterable placeholder="分类选择" @change="handleFilter">
+            <el-option
+              v-for="item in catalogList"
+              :key="item.value"
+              :label="item.nodeName"
+              :value="item.catalogId"/>
+          </el-select>
         </div>
         <el-table
           v-loading="tableLoading"
@@ -220,7 +227,8 @@ export default {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
       listQuery: {
-        name: ''
+        name: '',
+        catalog: ''
       },
       statusList: [
         {
@@ -277,7 +285,8 @@ export default {
   methods: {
     ...mapActions({
       'getProductInfo': 'GetProductInfo',
-      'searchProductInfo': 'SearchProductInfo'
+      'searchProductInfo': 'SearchProductInfo',
+      'queryProductCatalog': 'QueryProductCatalog'
     }),
     fetchcatalog() {
       fetchCatalogList().then(res => {
@@ -324,7 +333,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-          this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+          this.handleFilter()
           this.dialogFormVisible = false
         } else {
           this.$message({
@@ -406,14 +415,14 @@ export default {
       this.temp.morePics.push(`http://${res.url}`)
       console.log(this.temp.morePics)
     },
-    handleFilter() {
-      console.log(this.listQuery.name)
-      const search = this.listQuery.name
-      if (!search) {
+    handleFilter(query) {
+      if (query === this.listQuery.catalog) {
+        this.queryProductCatalog(query)
+      } else if (this.listQuery.name) {
+        this.searchProductInfo(this.listQuery.name)
+      } else {
         this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
-        return
       }
-      this.searchProductInfo(search)
     }
   }
 }
@@ -452,5 +461,8 @@ export default {
   width: 100%;
   height: 100%;
   display: block;
+}
+.query-select{
+  width: 125px;
 }
 </style>
