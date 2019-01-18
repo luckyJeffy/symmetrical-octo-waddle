@@ -67,6 +67,18 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label-width="45px" label="品牌:" class="postInfo-container-item">
+                    <el-input v-model="postForm.brand" placeholder="请输入品牌"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label-width="45px" label="产地:" class="postInfo-container-item">
+                    <el-input v-model="postForm.cradle" placeholder="请输入产地"/>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </el-col>
         </el-row>
@@ -109,6 +121,8 @@ const defaultForm = {
   name: '', // 名称
   title: '', // 简介
   price: 0, // 价格 单位 分
+  brand: '', // 品牌
+  cradle: '', // 产地
   salesVolume: 0, // 销量
   catalogId: 0, // 分类id
   unit: '', // 单位

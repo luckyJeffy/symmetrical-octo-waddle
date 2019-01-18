@@ -30,17 +30,17 @@
           highlight-current-row
           style="width: 100%"
         >
-          <el-table-column label="id" prop="id" sortable="custom" align="center" width="200">
+          <el-table-column label="id" prop="id" align="center" width="200">
             <template slot-scope="scope">
               <span>{{ scope.row.id }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="名称" prop="name" sortable="custom" align="center" width="100">
+          <el-table-column label="名称" prop="name" align="center" width="100">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格" width="88" align="center">
+          <el-table-column sortable="custom" label="价格" width="88" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.price }}</span>
             </template>
@@ -417,7 +417,7 @@ export default {
     },
     handleFilter(query) {
       if (query === this.listQuery.catalog) {
-        this.queryProductCatalog(query)
+        this.queryProductCatalog({ 'catalogId': query, 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
       } else if (this.listQuery.name) {
         this.searchProductInfo(this.listQuery.name)
       } else {

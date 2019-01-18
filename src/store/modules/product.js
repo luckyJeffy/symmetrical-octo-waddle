@@ -52,9 +52,9 @@ const user = {
         })
       })
     },
-    QueryProductCatalog({ commit }, value) {
+    QueryProductCatalog({ commit }, { catalogId, pageIndex, pageSize }) {
       return new Promise((resolve, reject) => {
-        queryProduct(value).then(response => {
+        queryProduct(catalogId, pageIndex, pageSize).then(response => {
           const data = response.data
           commit('SET_LIST', data.list)
           commit('SET_TOTAL_PAGE', data.totalPage)

@@ -37,11 +37,11 @@ export function searchProductInfo(value) {
 }
 
 // query by catalogId
-export function queryProduct(id) {
+export function queryProduct(id, pageNo, pageSize) {
   return request({
     url: 'biz/v01/selectProductWithoutToken.do',
     method: 'post',
-    data: { catalogId: id }
+    data: { catalogId: id, pageNo, pageSize }
   })
 }
 
