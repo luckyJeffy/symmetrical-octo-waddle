@@ -186,5 +186,61 @@ export const asyncRouterMap = [
         }
       }
     ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    redirect: '/order/index',
+    alwaysShow: true,
+    meta: {
+      title: '订单',
+      icon: 'nested',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/order/index'),
+        name: 'orderList',
+        meta: {
+          title: '订单列表',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/order/edit'),
+        name: 'OrderDetail',
+        hidden: true,
+        meta: {
+          title: '订单详情',
+          roles: ['admin'],
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/vip',
+    component: Layout,
+    redirect: '/vip/recharge',
+    alwaysShow: true,
+    meta: {
+      title: '会员',
+      icon: 'nested',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'recharge',
+        component: () => import('@/views/vip/recharge'),
+        name: 'vipRecharge',
+        meta: {
+          title: '会员充值',
+          roles: ['admin']
+        }
+      }
+
+    ]
   }
 ]

@@ -18,6 +18,8 @@ const getters = {
   productList: state => state.product.list,
   totalCount: state => state.product.totalCount,
   catalogList: state => state.catalog.list,
-  catalogCount: state => state.catalog.totalCount
+  catalogCount: state => state.catalog.totalCount,
+  orderList: state => state.order.list,
+  orderCount: state => state.order.totalCount
 }
 export default getters

@@ -1,0 +1,270 @@
+<template>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-input v-model="listQuery.name" placeholder="分类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+    </div>
+    <tree-table
+      :data="orderList"
+      :columns="columns"
+      :eval-args="args"
+      :expand-all="expandAll"
+      border
+    >
+      <el-table-column label="支付状态">
+        <template slot-scope="scope">
+          {{ scope.row.payStatus | payStatusFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="物流状态">
+        <template slot-scope="scope">
+          {{ scope.row.deliverStatus | deliverStatusFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="订单总额">
+        <template slot-scope="scope">
+          {{ scope.row.totalFee | totalFeeFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间">
+        <template slot-scope="scope">
+          {{ scope.row.createTime | createTimeFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="100">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" icon="el-icon-document" @click="handleUpdate(scope.row)">详情</el-button>
+        </template>
+      </el-table-column>
+    </tree-table>
+    <el-pagination
+      v-loading.fullscreen.lock="tableLoading"
+      :current-page="pageIndex"
+      :page-sizes="pageSizes"
+      :page-size="pageSize"
+      :total="orderCount"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item :label="$t('id')">
+          <template>{{ temp.id }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('订单编号')">
+          <template>{{ temp.serNum }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('收货人')">
+          <template>{{ temp.deliverName }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('联系方式')">
+          <template>{{ temp.deliverPhone }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('收货地址')">
+          <template>{{ temp.deliverAddress }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('支付状态')">
+          <template>{{ temp.payStatus| payStatusFilter }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('物流状态')">
+          <template>{{ temp.deliverStatus| deliverStatusFilter }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('订单总额')">
+          <template>{{ temp.totalFee| totalFeeFilter }}</template>
+        </el-form-item>
+        <el-form-item :label="$t('配送时间')">
+          <template>{{ temp.deliverTime | deliverTimeFilter }}个小时内送达</template>
+        </el-form-item>
+        <el-form-item :label="$t('创建时间')">
+          <!-- <el-input v-model="temp.deliverName"/> -->
+          <template>{{ temp.createTime| createTimeFilter }}</template>
+        </el-form-item>
+      </el-form>
+      <!-- <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div> -->
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { mapActions } from 'vuex'
+import treeTable from '@/components/TreeTable'
+
+export default {
+  name: 'CatalogList',
+  components: { treeTable },
+  filters: {
+    payStatusFilter(status) {
+      const statusMap = {
+        'NOT_PAY': '未支付',
+        'PAID': '已支付'
+      }
+      return statusMap[status]
+    },
+    deliverStatusFilter(status) {
+      const statusMap = {
+        'ON_THE_WAY': '送货中',
+        'CONFIRMED': '已送达'
+      }
+      return statusMap[status]
+    },
+    totalFeeFilter(value) {
+      if (value) {
+        value = Number(value)
+        return '￥' + (value / 100).toFixed(2)
+      } else {
+        return '￥0.00'
+      }
+    },
+    createTimeFilter(value) {
+      var date = new Date(value)// 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '/'
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/'
+      var D = date.getDate() + '/'
+      var h = date.getHours() + ':'
+      var m = date.getMinutes() + ':'
+      var s = date.getSeconds()
+      return Y + M + D + h + m + s
+    },
+    deliverTimeFilter(value) {
+      return value / 60
+    }
+  },
+  data() {
+    return {
+      expandAll: false,
+      // 要显示的字段, 需要自定义的字段请使用 slot
+      columns: [
+        {
+          text: 'ID',
+          value: 'id'
+        },
+        {
+          text: '订单编号',
+          value: 'serNum'
+        },
+        {
+          text: '收货人',
+          value: 'deliverName'
+        },
+        {
+          text: '联系电话',
+          value: 'deliverPhone'
+        },
+        {
+          text: '收货地址',
+          value: 'deliverAddress'
+        }
+      ],
+      args: [null, null, 'id'],
+      pageIndex: 1,
+      pageSize: 20,
+      tableLoading: false,
+      pageSizes: [20, 50, 100, 500],
+      listQuery: {
+        name: ''
+      },
+      temp: {
+        id: '',
+        createTime: '',
+        deliverAddress: '',
+        deliverName: '',
+        deliverPhone: '',
+        deliverStatus: '',
+        deliverTime: '',
+        orderStatus: '',
+        payStatus: '',
+        productDetailJson: '',
+        serNum: '',
+        storeId: '',
+        totalFee: ''
+      },
+      payStatus: '',
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: '订单详情',
+        create: 'Create'
+      },
+      rules: {
+        type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+      }
+    }
+  },
+  computed: {
+    orderList() {
+      return this.$store.state.order.list
+    },
+    orderCount() {
+      return this.$store.state.order.totalCount
+    },
+    tempPayStatus(status) {
+      const statusMap = {
+        'NOT_PAY': '未支付',
+        'PAID': '已支付'
+      }
+      return statusMap[status]
+    }
+  },
+  watch: {
+    async pageIndex(newValue, oldValue) {
+      this.tableLoading = true
+      await this.getOrderList({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+      this.tableLoading = false
+    },
+    async pageSize(newValue, oldValue) {
+      this.tableLoading = true
+      await this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': newValue })
+      this.tableLoading = false
+    }
+  },
+  created() {
+    this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+  },
+  mounted() {
+    // console.log('catalogList: ', this.catalogList)
+  },
+  methods: {
+    ...mapActions({
+      'getOrderList': 'GetOrderList'
+    }),
+    handleCurrentChange(val) {
+      this.pageIndex = val
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    handleFilter() {
+      const search = this.listQuery.name
+      if (!search) {
+        this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+        return
+      }
+    //   this.searchProductInfo(search)
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    }
+
+  }
+}
+</script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+.classifyImage{
+  width: 50px;
+  height: 50px;
+  display: block;
+}
+</style>
