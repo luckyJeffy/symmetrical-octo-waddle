@@ -48,37 +48,52 @@
       @current-change="handleCurrentChange"
     />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item :label="$t('id')">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="id">
           <template>{{ temp.id }}</template>
         </el-form-item>
-        <el-form-item :label="$t('订单编号')">
+        <el-form-item label="订单编号">
           <template>{{ temp.serNum }}</template>
         </el-form-item>
-        <el-form-item :label="$t('收货人')">
+        <el-form-item label="收货人">
           <template>{{ temp.deliverName }}</template>
         </el-form-item>
-        <el-form-item :label="$t('联系方式')">
+        <el-form-item label="联系方式">
           <template>{{ temp.deliverPhone }}</template>
         </el-form-item>
-        <el-form-item :label="$t('收货地址')">
+        <el-form-item label="收货地址">
           <template>{{ temp.deliverAddress }}</template>
         </el-form-item>
-        <el-form-item :label="$t('支付状态')">
+        <el-form-item label="支付状态">
           <template>{{ temp.payStatus| payStatusFilter }}</template>
         </el-form-item>
-        <el-form-item :label="$t('物流状态')">
+        <el-form-item label="物流状态">
           <template>{{ temp.deliverStatus| deliverStatusFilter }}</template>
         </el-form-item>
-        <el-form-item :label="$t('订单总额')">
-          <template>{{ temp.totalFee| totalFeeFilter }}</template>
-        </el-form-item>
-        <el-form-item :label="$t('配送时间')">
+        <el-form-item label="配送时间">
           <template>{{ temp.deliverTime | deliverTimeFilter }}个小时内送达</template>
         </el-form-item>
-        <el-form-item :label="$t('创建时间')">
+        <el-form-item label="创建时间">
           <!-- <el-input v-model="temp.deliverName"/> -->
           <template>{{ temp.createTime| createTimeFilter }}</template>
+        </el-form-item>
+        <el-form-item label="商品图片">
+          <div v-for="(value,Indexes) in temp.productImg" :key="Indexes" class="productImg">
+            <img :src="value.icon" alt="" width="150px" >
+            <span class="productImg_name">{{ value.name }}</span>
+            <span>单价：{{ value.price | totalFeeFilter }}</span>
+            <br>
+            <span>数量：{{ value.quantity }}</span>
+          </div>
+        </el-form-item>
+        <el-form-item label="商品总价" >
+          <template>{{ totalPrice | totalFeeFilter }}</template>
+        </el-form-item>
+        <el-form-item label="店铺优惠" >
+          <template>{{ totalPrice-temp.totalFee | totalFeeFilter }}</template>
+        </el-form-item>
+        <el-form-item label="订单总额">
+          <template>{{ temp.totalFee | totalFeeFilter }}</template>
         </el-form-item>
       </el-form>
       <!-- <div slot="footer" class="dialog-footer">
@@ -167,6 +182,7 @@ export default {
       listQuery: {
         name: ''
       },
+      totalPrice: 0, // 商品总价
       temp: {
         id: '',
         createTime: '',
@@ -177,7 +193,7 @@ export default {
         deliverTime: '',
         orderStatus: '',
         payStatus: '',
-        productDetailJson: '',
+        productImg: '',
         serNum: '',
         storeId: '',
         totalFee: ''
@@ -188,12 +204,8 @@ export default {
       textMap: {
         update: '订单详情',
         create: 'Create'
-      },
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       }
+
     }
   },
   computed: {
@@ -248,8 +260,14 @@ export default {
     //   this.searchProductInfo(search)
     },
     handleUpdate(row) {
+      this.totalPrice = 0
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.productImg = JSON.parse(this.temp.productDetailJson)
+      for (let i = 0; i < this.temp.productImg.length; i++) {
+        this.totalPrice += this.temp.productImg[i].price * this.temp.productImg[i].quantity
+      }
+      console.log(this.totalPrice)
+      console.log(this.temp.productImg)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -266,5 +284,20 @@ export default {
   width: 50px;
   height: 50px;
   display: block;
+}
+.productImg{
+  height: 152px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+}
+.productImg img{
+  float: left;
+}
+.productImg .productImg_name{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+
 }
 </style>
