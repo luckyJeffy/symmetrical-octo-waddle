@@ -242,5 +242,28 @@ export const asyncRouterMap = [
       }
 
     ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/index',
+    alwaysShow: true,
+    meta: {
+      title: '用户',
+      icon: 'nested',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/user/index'),
+        name: 'userList',
+        meta: {
+          title: '用户列表',
+          roles: ['admin']
+        }
+      }
+
+    ]
   }
 ]

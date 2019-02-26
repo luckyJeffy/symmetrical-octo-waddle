@@ -7,6 +7,7 @@ import user from './modules/user'
 import product from './modules/product'
 import catalog from './modules/catalog'
 import order from './modules/order'
+import userList from './modules/userList'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     user,
     product,
     catalog,
-    order
+    order,
+    userList
   },
   getters
 })

@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <!-- <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="分类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-    </div>
+    </div> -->
     <tree-table
       :data="orderList"
       :columns="columns"
@@ -252,11 +252,11 @@ export default {
       this.pageSize = val
     },
     handleFilter() {
-      const search = this.listQuery.name
-      if (!search) {
-        this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
-        return
-      }
+      // const search = this.listQuery.name
+      // if (!search) {
+      //   this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+      //   return
+      // }
     //   this.searchProductInfo(search)
     },
     handleUpdate(row) {
