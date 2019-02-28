@@ -20,9 +20,9 @@ const userList = {
   },
 
   actions: {
-    GetUserList({ commit }, { pageIndex, pageSize }) {
+    GetUserList({ commit }, { pageIndex, pageSize, phone, name }) {
       return new Promise((resolve, reject) => {
-        getUserList(pageIndex, pageSize)
+        getUserList(pageIndex, pageSize, phone, name)
           .then(response => {
             const data = response.data
             commit('SET_LIST', data.list)

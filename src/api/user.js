@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-// 获取订单列表
-export function getUserList(pageNo, pageSize) {
+// 获取用户列表
+export function getUserList(pageNo, pageSize, phone, name) {
   return request({
-    url: '/console/v01/listConsoleUserAccount.do',
+    url: '/portal/v01/listPortalUserAccount.do',
     method: 'post',
-    data: { pageNo, pageSize }
+    data: { pageNo, pageSize, phone, name }
   })
 }
