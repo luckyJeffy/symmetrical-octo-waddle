@@ -333,7 +333,7 @@ export default {
             message: '修改成功',
             type: 'success'
           })
-          this.handleFilter()
+          this.handleFilter(this.listQuery.catalog)
           this.dialogFormVisible = false
         } else {
           this.$message({
@@ -416,7 +416,7 @@ export default {
       console.log(this.temp.morePics)
     },
     handleFilter(query) {
-      if (query === this.listQuery.catalog) {
+      if (query === this.listQuery.catalog && query) {
         this.queryProductCatalog({ 'catalogId': query, 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
       } else if (this.listQuery.name) {
         this.searchProductInfo(this.listQuery.name)
