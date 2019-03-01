@@ -20,9 +20,9 @@ const order = {
   },
 
   actions: {
-    GetOrderList({ commit }, { pageIndex, pageSize }) {
+    GetOrderList({ commit }, { pageIndex, pageSize, serNum }) {
       return new Promise((resolve, reject) => {
-        getOrderList(pageIndex, pageSize)
+        getOrderList(pageIndex, pageSize, serNum)
           .then(response => {
             const data = response.data
             commit('SET_LIST', data.list)
@@ -35,6 +35,7 @@ const order = {
           })
       })
     }
+
   }
 }
 
