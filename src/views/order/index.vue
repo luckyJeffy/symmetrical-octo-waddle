@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <!-- <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="分类名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+    <div class="filter-container">
+      <el-input v-model="listQuery.serNum" placeholder="订单编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-    </div> -->
+    </div>
     <tree-table
       :data="orderList"
       :columns="columns"
@@ -180,7 +180,7 @@ export default {
       tableLoading: false,
       pageSizes: [20, 50, 100, 500],
       listQuery: {
-        name: ''
+        serNum: ''
       },
       totalPrice: 0, // 商品总价
       temp: {
@@ -226,17 +226,17 @@ export default {
   watch: {
     async pageIndex(newValue, oldValue) {
       this.tableLoading = true
-      await this.getOrderList({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+      await this.getOrderList({ 'pageIndex': newValue, 'pageSize': this.pageSize, 'serNum': this.listQuery.serNum })
       this.tableLoading = false
     },
     async pageSize(newValue, oldValue) {
       this.tableLoading = true
-      await this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': newValue })
+      await this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': newValue, 'serNum': this.listQuery.serNum })
       this.tableLoading = false
     }
   },
   created() {
-    this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
+    this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize, 'serNum': this.listQuery.serNum })
   },
   mounted() {
     // console.log('catalogList: ', this.catalogList)
@@ -252,12 +252,7 @@ export default {
       this.pageSize = val
     },
     handleFilter() {
-      // const search = this.listQuery.name
-      // if (!search) {
-      //   this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
-      //   return
-      // }
-    //   this.searchProductInfo(search)
+      this.getOrderList({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize, 'serNum': this.listQuery.serNum })
     },
     handleUpdate(row) {
       this.totalPrice = 0
