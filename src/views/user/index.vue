@@ -38,24 +38,10 @@
           {{ scope.row.createTime | createTimeFilter }}
         </template>
       </el-table-column>
-      <el-table-column label="推广累计(人)">
-        <template slot-scope="scope">
-          1
-        </template>
-      </el-table-column>
-      <el-table-column label="推广礼品" width="100">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini">领取</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="会员礼品" width="100">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini">领取</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" icon="el-icon-document" @click="handleUpdate(scope.row)">详情</el-button>
+          <el-button v-if="scope.row.vip" type="primary" size="mini" @click="handleUpdateGift(scope.row)">领取礼品</el-button>
         </template>
       </el-table-column>
     </tree-table>
@@ -101,11 +87,47 @@
         <el-button type="primary">确认</el-button>
       </div> -->
     </el-dialog>
+    <el-dialog :title="giftTextMap[giftDialogStatus]" :visible.sync="giftDialogFormVisible">
+      <el-form ref="dataFormGift" :model="giftTemp" label-position="right" label-width="150px" style="width: 500px; margin-left:50px;">
+        <el-form-item label="领取注册礼品次数:">
+          <template>{{ giftNum.注册礼品 }}</template>
+          <el-button v-if="giftTemp.vip && giftNum.注册礼品=='0'" type="primary" @click="registeredGifts(giftTemp.userOpenId)">可领取</el-button>
+          <el-button v-else type="info" disabled @click="registeredGifts(giftTemp.userOpenId)">已领取</el-button>
+        </el-form-item>
+        <el-form-item label="推广人数:">
+          <template>{{ giftNum.推广人数 }}</template>
+        </el-form-item>
+        <el-form-item label="领取推广礼品次数:">
+          <template>{{ giftNum.推广礼品 }}</template>
+          <el-button v-if="spreadNum>0" type="primary" @click="promotionalGifts(giftTemp.userOpenId)">可领取{{ spreadNum }}次</el-button>
+          <el-button v-else type="info" disabled>可领取{{ spreadNum }}次</el-button>
+        </el-form-item>
+        <template>领取记录：</template>
+        <el-table :data="giftList" row-key="id" border fit highlight-current-row style="width: 100%">
+          <el-table-column align="center" label="业务">
+            <template slot-scope="scope">
+              {{ scope.row.businessType }}
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="礼品">
+            <template slot-scope="scope">
+              {{ scope.row.detailed }}
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="领取时间">
+            <template slot-scope="scope">
+              {{ scope.row.createTime | createTimeFilter }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import treeTable from '@/components/TreeTable'
+import { getlistGiftNum, insertGiftLog, listGiftLog } from '@/api/user'
 export default {
   name: 'Index',
   components: { treeTable },
@@ -161,6 +183,16 @@ export default {
       textMap: {
         update: '用户详情',
         create: 'Create'
+      },
+      giftTemp: {},
+      giftNum: {},
+      giftList: [],
+      spreadNum: 0, // 能领取次数
+      giftDialogFormVisible: false,
+      giftDialogStatus: '',
+      giftTextMap: {
+        update: '礼品详情',
+        create: 'Create'
       }
     }
   },
@@ -208,6 +240,59 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleUpdateGift(row) {
+      this.giftTemp = Object.assign({}, row) // copy obj
+      this.giftDialogStatus = 'update'
+      this.giftDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataFormGift'].clearValidate()
+      })
+      getlistGiftNum(this.giftTemp.userOpenId).then(res => {
+        if (res.data.resultCode === '200') {
+          this.giftNum = Object.assign({}, res.data.giftNum)
+          this.spreadNum = parseInt(res.data.giftNum.推广人数 / 5) - res.data.giftNum.推广礼品// 领取次数=推广人数/5-已领取次数
+        } else {
+          console.log(res.data.resultMessage)
+        }
+      })
+      listGiftLog('1', '1000', this.giftTemp.userOpenId).then(res => {
+        if (res.data.resultCode === '200') {
+          this.giftList = res.data.list
+        } else {
+          console.log(res.data.resultMessage)
+        }
+      })
+    },
+    registeredGifts(userOpenId) {
+      insertGiftLog(userOpenId, '礼品', '注册').then(res => {
+        if (res.data.resultCode === '200') {
+          this.$notify({
+            title: '成功',
+            message: '领取成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.giftDialogFormVisible = false
+        } else {
+          console.log(res.data.resultMessage)
+        }
+      })
+    },
+    promotionalGifts(userOpenId) {
+      insertGiftLog(userOpenId, '礼品', '推广').then(res => {
+        if (res.data.resultCode === '200') {
+          this.$notify({
+            title: '成功',
+            message: '领取成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.giftDialogFormVisible = false
+        } else {
+          console.log(res.data.resultMessage)
+        }
       })
     }
   }
