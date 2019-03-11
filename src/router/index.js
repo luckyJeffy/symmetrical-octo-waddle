@@ -87,20 +87,20 @@ export const constantRouterMap = [
         meta: { title: 'documentation', icon: 'documentation', noCache: true }
       }
     ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
-      }
-    ]
   }
+  // {
+  //   path: '/guide',
+  //   component: Layout,
+  //   redirect: '/guide/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/guide/index'),
+  //       name: 'Guide',
+  //       meta: { title: 'guide', icon: 'guide', noCache: true }
+  //     }
+  //   ]
+  // }
 ]
 
 export default new Router({
@@ -111,6 +111,28 @@ export default new Router({
 
 // icon color #BFCBD9
 export const asyncRouterMap = [
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/system',
+    alwaysShow: true,
+    meta: {
+      title: '系统管理',
+      icon: 'nested',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'UserManagement',
+        component: () => import('@/views/system/userManagement'),
+        name: 'catalogList',
+        meta: {
+          title: '系统用户管理',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
   {
     path: '/product',
     component: Layout,
@@ -220,36 +242,36 @@ export const asyncRouterMap = [
       }
     ]
   },
-  {
-    path: '/vip',
-    component: Layout,
-    redirect: '/vip/recharge',
-    alwaysShow: true,
-    meta: {
-      title: '会员',
-      icon: 'nested',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'recharge',
-        component: () => import('@/views/vip/recharge'),
-        name: 'vipRecharge',
-        meta: {
-          title: '会员充值',
-          roles: ['admin']
-        }
-      }
+  // {
+  //   path: '/vip',
+  //   component: Layout,
+  //   redirect: '/vip/recharge',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '会员',
+  //     icon: 'nested',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'recharge',
+  //       component: () => import('@/views/vip/recharge'),
+  //       name: 'vipRecharge',
+  //       meta: {
+  //         title: '会员充值',
+  //         roles: ['admin']
+  //       }
+  //     }
 
-    ]
-  },
+  //   ]
+  // },
   {
     path: '/user',
     component: Layout,
     redirect: '/user/index',
     alwaysShow: true,
     meta: {
-      title: '用户',
+      title: '会员',
       icon: 'nested',
       roles: ['admin']
     },
@@ -259,7 +281,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/user/index'),
         name: 'userList',
         meta: {
-          title: '用户列表',
+          title: '会员列表',
           roles: ['admin']
         }
       }

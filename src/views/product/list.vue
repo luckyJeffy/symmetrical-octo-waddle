@@ -14,7 +14,7 @@
           <router-link to="/product/create">
             <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
           </router-link>
-          <el-select v-model="listQuery.catalog" class="filter-item query-select" filterable placeholder="分类选择" @change="handleFilter">
+          <el-select v-model="listQuery.catalog" class="filter-item query-select" filterable placeholder="分类选择" @change="selectFilter">
             <el-option
               v-for="item in catalogList"
               :key="item.value"
@@ -265,7 +265,15 @@ export default {
   watch: {
     async pageIndex(newValue, oldValue) {
       this.tableLoading = true
-      await this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+      // debugger
+      if (this.listQuery.catalog) {
+        await this.queryProductCatalog({ 'catalogId': this.listQuery.catalog, 'pageIndex': newValue, 'pageSize': this.pageSize })
+      } else if (this.listQuery.name) {
+        await this.searchProductInfo(this.listQuery.name)
+      } else {
+        await this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
+      }
+      // await this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
       this.tableLoading = false
     },
     async pageSize(newValue, oldValue) {
@@ -423,6 +431,10 @@ export default {
       } else {
         this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
       }
+    },
+    selectFilter(query) {
+      this.pageIndex = 1
+      this.queryProductCatalog({ 'catalogId': query, 'pageIndex': 1, 'pageSize': this.pageSize })
     }
   }
 }
