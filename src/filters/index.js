@@ -40,3 +40,28 @@ export function numberFormatter(num, digits) {
 export function toThousandFilter(num) {
   return (+num || 0).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
+// 验证手机号
+export function myPhoneFilter(rule, value, callback) {
+  if (!value) {
+    return callback(new Error('输入不可以为空'))
+  }
+  var pattern = /^1[34578]\d{9}$/
+  if (pattern.test(value)) {
+    return callback()
+  }
+  return callback(new Error('输入的手机号错误'))
+}
+
+export function myEmailFilter(rule, value, callback) {
+  if (!value) {
+    return callback(new Error('输入不可以为空'))
+  } else {
+    if (value !== '') {
+      var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+      if (!reg.test(value)) {
+        return callback(new Error('请输入有效的邮箱'))
+      }
+    }
+    return callback()
+  }
+}

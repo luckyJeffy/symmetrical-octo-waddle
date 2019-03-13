@@ -123,11 +123,20 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'UserManagement',
+        path: 'userManagement',
         component: () => import('@/views/system/userManagement'),
-        name: 'catalogList',
+        name: 'userManagement',
         meta: {
           title: '系统用户管理',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'empowerManagement',
+        component: () => import('@/views/system/empowerManagement'),
+        name: 'empowerManagement',
+        meta: {
+          title: '角色/授权管理',
           roles: ['admin']
         }
       }
