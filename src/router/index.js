@@ -111,146 +111,146 @@ export default new Router({
 
 // icon color #BFCBD9
 export const asyncRouterMap = [
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/system',
-    alwaysShow: true,
-    meta: {
-      title: '系统管理',
-      icon: 'nested',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'userManagement',
-        component: () => import('@/views/system/userManagement'),
-        name: 'userManagement',
-        meta: {
-          title: '系统用户管理',
-          roles: ['admin']
-        }
-      },
-      {
-        path: 'empowerManagement',
-        component: () => import('@/views/system/empowerManagement'),
-        name: 'empowerManagement',
-        meta: {
-          title: '角色/授权管理',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-  {
-    path: '/product',
-    component: Layout,
-    redirect: '/product/list',
-    alwaysShow: true,
-    meta: {
-      title: '产品',
-      icon: 'goods',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/product/list'),
-        name: 'productList',
-        meta: {
-          title: '产品列表',
-          roles: ['admin']
-        }
-      },
-      {
-        path: 'create',
-        component: () => import('@/views/product/create'),
-        name: 'productCreate',
-        meta: {
-          title: '发布产品',
-          roles: ['admin']
-        }
-      },
-      {
-        path: 'edit/:id',
-        component: () => import('@/views/product/edit'),
-        name: 'ProductEdit',
-        hidden: true,
-        meta: {
-          title: 'productEdit',
-          roles: ['admin'],
-          noCache: true
-        }
-      },
-      {
-        path: 'create',
-        component: () => import('@/views/product/create'),
-        name: 'ProductCreate',
-        hidden: true,
-        meta: {
-          title: 'productCreate',
-          roles: ['admin'],
-          noCache: true
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   redirect: '/system/system',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '系统管理',
+  //     icon: 'nested',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'userManagement',
+  //       component: () => import('@/views/system/userManagement'),
+  //       name: 'userManagement',
+  //       meta: {
+  //         title: '系统用户管理',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       path: 'empowerManagement',
+  //       component: () => import('@/views/system/empowerManagement'),
+  //       name: 'empowerManagement',
+  //       meta: {
+  //         title: '角色/授权管理',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/product',
+  //   component: Layout,
+  //   redirect: '/product/list',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '商品',
+  //     icon: 'goods',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/product/list'),
+  //       name: 'productList',
+  //       meta: {
+  //         title: '商品列表',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       path: 'create',
+  //       component: () => import('@/views/product/create'),
+  //       name: 'productCreate',
+  //       meta: {
+  //         title: '发布商品',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       path: 'edit/:id',
+  //       component: () => import('@/views/product/edit'),
+  //       name: 'ProductEdit',
+  //       hidden: true,
+  //       meta: {
+  //         title: 'productEdit',
+  //         roles: ['admin'],
+  //         noCache: true
+  //       }
+  //     },
+  //     {
+  //       path: 'create',
+  //       component: () => import('@/views/product/create'),
+  //       name: 'ProductCreate',
+  //       hidden: true,
+  //       meta: {
+  //         title: 'productCreate',
+  //         roles: ['admin'],
+  //         noCache: true
+  //       }
+  //     }
+  //   ]
+  // },
 
-  {
-    path: '/catalog',
-    component: Layout,
-    redirect: '/catalog/index',
-    alwaysShow: true,
-    meta: {
-      title: '分类',
-      icon: 'nested',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/catalog/index'),
-        name: 'catalogList',
-        meta: {
-          title: '分类列表',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-  {
-    path: '/order',
-    component: Layout,
-    redirect: '/order/index',
-    alwaysShow: true,
-    meta: {
-      title: '订单',
-      icon: 'nested',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/order/index'),
-        name: 'orderList',
-        meta: {
-          title: '订单列表',
-          roles: ['admin']
-        }
-      },
-      {
-        path: 'edit/:id',
-        component: () => import('@/views/order/edit'),
-        name: 'OrderDetail',
-        hidden: true,
-        meta: {
-          title: '订单详情',
-          roles: ['admin'],
-          noCache: true
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/catalog',
+  //   component: Layout,
+  //   redirect: '/catalog/index',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '分类',
+  //     icon: 'nested',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/catalog/index'),
+  //       name: 'catalogList',
+  //       meta: {
+  //         title: '分类列表',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/order',
+  //   component: Layout,
+  //   redirect: '/order/index',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '订单',
+  //     icon: 'nested',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       component: () => import('@/views/order/index'),
+  //       name: 'orderList',
+  //       meta: {
+  //         title: '订单列表',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       path: 'edit/:id',
+  //       component: () => import('@/views/order/edit'),
+  //       name: 'OrderDetail',
+  //       hidden: true,
+  //       meta: {
+  //         title: '订单详情',
+  //         roles: ['admin'],
+  //         noCache: true
+  //       }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/vip',
   //   component: Layout,
@@ -274,27 +274,28 @@ export const asyncRouterMap = [
 
   //   ]
   // },
-  {
-    path: '/user',
-    component: Layout,
-    redirect: '/user/index',
-    alwaysShow: true,
-    meta: {
-      title: '会员',
-      icon: 'nested',
-      roles: ['admin']
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/user/index'),
-        name: 'userList',
-        meta: {
-          title: '会员列表',
-          roles: ['admin']
-        }
-      }
+  // {
+  //   path: '/user',
+  //   component: Layout,
+  //   // redirect: '/user/index',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '会员',
+  //     icon: 'nested',
+  //     roles: ['admin']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/user/index'),
+  //       name: 'userList',
+  //       meta: {
+  //         title: '会员列表',
+  //         roles: ['admin']
+  //       }
+  //     }
 
-    ]
-  }
+  //   ]
+  // },
+  { path: '*', redirect: '/404', hidden: true }
 ]

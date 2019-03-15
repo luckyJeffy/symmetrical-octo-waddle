@@ -1,5 +1,6 @@
-import { loginByEncryptedData, logout, getUserInfo } from '@/api/login'
+import { loginByEncryptedData, logout, getUserInfo, getListMyConsoleMenuVue } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { asyncRouterMap } from '@/router'
 
 const user = {
   state: {
@@ -14,7 +15,8 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    userRole: []
   },
 
   mutations: {
@@ -44,6 +46,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_USERROLE: (state, userRole) => {
+      state.userRole = userRole
     }
   },
 
@@ -101,7 +106,70 @@ const user = {
           })
       })
     },
+    // 角色权限
+    GetListMyConsoleMenuVue({ commit }) {
+      return new Promise((resolve, reject) => {
+        getListMyConsoleMenuVue({}).then(response => {
+          response.data.forEach((item) => {
+            const routerObj = {
+              path: item.path,
+              component: () => import('@/views/layout/Layout'),
+              alwaysShow: true,
+              meta: {
+                title: item.name,
+                icon: item.iconCls,
+                roles: ['admin']
+              },
+              children: []
+            }
 
+            if (item.children) {
+              item.children.forEach((items) => {
+                if (items.component.startsWith('/system/empowerManagement')) {
+                  var myComponent = resolve => require(['@/views/system/empowerManagement'], resolve)
+                } else
+                if (items.component.startsWith('/system/userManagement')) {
+                  var myComponent = resolve => require(['@/views/system/userManagement'], resolve)
+                } else
+                if (items.component.startsWith('/product/list')) {
+                  var myComponent = resolve => require(['@/views/product/list'], resolve)
+                } else
+                if (items.component.startsWith('/product/create')) {
+                  var myComponent = resolve => require(['@/views/product/create'], resolve)
+                } else
+                if (items.component.startsWith('/catalog/index')) {
+                  var myComponent = resolve => require(['@/views/catalog/index'], resolve)
+                } else
+                if (items.component.startsWith('/order/index')) {
+                  var myComponent = resolve => require(['@/views/order/index'], resolve)
+                } else
+                if (items.component.startsWith('/user/index')) {
+                  var myComponent = resolve => require(['@/views/user/index'], resolve)
+                }
+
+                const routerObjChildren = {
+                  path: items.path,
+                  component: myComponent,
+                  name: items.name,
+                  meta: {
+                    title: items.name,
+                    roles: ['admin']
+                  }
+                }
+                routerObj.children.push(routerObjChildren)
+              })
+            }
+            console.log(routerObj.children[0].component)
+            asyncRouterMap.push(routerObj)
+          })
+
+          commit('SET_USERROLE', response.data)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

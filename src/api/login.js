@@ -44,3 +44,11 @@ export function getUserInfo(accessToken) {
     data: { accessToken }
   })
 }
+// 角色权限
+export function getListMyConsoleMenuVue(para) {
+  return request({
+    url: '/console/v01/listMyConsoleMenuVue.do',
+    method: 'post',
+    data: para
+  })
+}

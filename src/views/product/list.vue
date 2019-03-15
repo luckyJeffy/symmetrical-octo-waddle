@@ -9,7 +9,7 @@
         :xl="24"
       >
         <div class="filter-container">
-          <el-input v-model="listQuery.name" placeholder="产品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+          <el-input v-model="listQuery.name" placeholder="商品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
           <router-link to="/product/create">
             <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
@@ -353,7 +353,7 @@ export default {
     },
     handleProductRemove(prod) {
       const self = this
-      self.$confirm('是否禁用该产品?', '提示', {
+      self.$confirm('是否禁用该商品?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -374,7 +374,7 @@ export default {
     },
     handleProductRestore(prod) {
       const self = this
-      self.$confirm('是否恢复该产品?', '提示', {
+      self.$confirm('是否恢复该商品?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
