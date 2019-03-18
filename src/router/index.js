@@ -297,5 +297,28 @@ export const asyncRouterMap = [
 
   //   ]
   // },
+  {
+    path: '/integral',
+    component: Layout,
+    // redirect: '/user/index',
+    alwaysShow: true,
+    meta: {
+      title: '积分管理',
+      icon: 'nested',
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'integralList',
+        component: () => import('@/views/integral/integralList'),
+        name: 'integralList',
+        meta: {
+          title: '积分商品列表',
+          roles: ['admin']
+        }
+      }
+
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]

@@ -9,6 +9,7 @@ import catalog from './modules/catalog'
 import order from './modules/order'
 import userList from './modules/userList'
 import system from './modules/system'
+import integral from './modules/integral'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -23,7 +24,8 @@ const store = new Vuex.Store({
     catalog,
     order,
     userList,
-    system
+    system,
+    integral
   },
   getters
 })

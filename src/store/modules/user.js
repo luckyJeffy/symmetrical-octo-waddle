@@ -159,7 +159,6 @@ const user = {
                 routerObj.children.push(routerObjChildren)
               })
             }
-            console.log(routerObj.children[0].component)
             asyncRouterMap.push(routerObj)
           })
 
