@@ -6,8 +6,8 @@
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">New Visits</div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num"/>
+          <div class="card-panel-text">总用户数</div>
+          <count-to :start-val="0" :end-val="totalUser" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -17,8 +17,8 @@
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">Messages</div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num"/>
+          <div class="card-panel-text">总商品数</div>
+          <count-to :start-val="0" :end-val="totalProduct" :duration="3000" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -28,8 +28,8 @@
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">Purchases</div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num"/>
+          <div class="card-panel-text">总营业额</div>
+          <count-to :start-val="0" :end-val="totalMoney/100" :duration="3200" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -39,8 +39,8 @@
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">Shoppings</div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num"/>
+          <div class="card-panel-text">总订单数</div>
+          <count-to :start-val="0" :end-val="totalOrder" :duration="3600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -49,14 +49,46 @@
 
 <script>
 import CountTo from 'vue-count-to'
-
+import { totalData } from '@/api/statistics'
 export default {
   components: {
     CountTo
   },
+  filters: {
+    totalFilter(value) {
+      if (value) {
+        value = Number(value)
+        return (value / 100).toFixed(2)
+      } else {
+        return '0.00'
+      }
+    }
+  },
+  data() {
+    return {
+      totalUser: 0,
+      totalProduct: 0,
+      totalOrder: 0,
+      totalMoney: 0
+    }
+  },
+  mounted() {
+    this.totalStatistics()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    totalStatistics() {
+      const para = {}
+      totalData(para).then(res => {
+        if (res.data.resultCode == 200) {
+          this.totalUser = res.data.totalReport.totalUser
+          this.totalProduct = res.data.totalReport.totalProduct
+          this.totalOrder = res.data.totalReport.totalOrder
+          this.totalMoney = res.data.totalReport.totalMoney
+        }
+      })
     }
   }
 }

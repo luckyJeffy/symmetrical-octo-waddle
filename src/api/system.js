@@ -56,3 +56,11 @@ export function deleteConsoleRole(para) {
     data: para
   })
 }
+// 授权菜单
+export function getListAllMenuFunction(para) {
+  return request({
+    url: '/console/v01/listAllMenuFunction.do',
+    method: 'post',
+    data: para
+  })
+}

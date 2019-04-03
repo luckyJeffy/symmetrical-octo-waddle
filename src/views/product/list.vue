@@ -193,6 +193,7 @@ export default {
       return statusMap[status]
     },
     picsFilter(list) {
+			console.log(list)
       const urls = []
       for (const url of list) {
         urls.push({
