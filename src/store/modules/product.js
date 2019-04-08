@@ -39,9 +39,9 @@ const user = {
           })
       })
     },
-    SearchProductInfo({ commit }, value) {
+    SearchProductInfo({ commit }, { name, serNum }) {
       return new Promise((resolve, reject) => {
-        searchProductInfo(value).then(response => {
+        searchProductInfo(name, serNum).then(response => {
           const data = response.data
           commit('SET_LIST', data.list)
           commit('SET_TOTAL_PAGE', data.totalPage)

@@ -28,11 +28,11 @@ export function addProductInfo(product) {
 }
 
 // 搜索产品
-export function searchProductInfo(value) {
+export function searchProductInfo(name, serNum) {
   return request({
     url: 'biz/v01/listBizDrug.do',
     method: 'post',
-    data: { name: value }
+    data: { name: name, serNum: serNum }
   })
 }
 

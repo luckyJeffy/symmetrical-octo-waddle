@@ -10,6 +10,7 @@
       >
         <div class="filter-container">
           <el-input v-model="listQuery.name" placeholder="商品名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+          <el-input v-model="listQuery.serNum" placeholder="序列号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
           <router-link to="/product/create">
             <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
@@ -229,6 +230,7 @@ export default {
       },
       listQuery: {
         name: '',
+        serNum: '',
         catalog: ''
       },
       statusList: [
@@ -269,8 +271,8 @@ export default {
       // debugger
       if (this.listQuery.catalog) {
         await this.queryProductCatalog({ 'catalogId': this.listQuery.catalog, 'pageIndex': newValue, 'pageSize': this.pageSize })
-      } else if (this.listQuery.name) {
-        await this.searchProductInfo(this.listQuery.name)
+      } else if (this.listQuery.name || this.listQuery.serNum) {
+        await this.searchProductInfo({ 'name': this.listQuery.name, 'serNum': this.listQuery.serNum })
       } else {
         await this.getProductInfo({ 'pageIndex': newValue, 'pageSize': this.pageSize })
       }
@@ -427,8 +429,8 @@ export default {
     handleFilter(query) {
       if (query === this.listQuery.catalog && query) {
         this.queryProductCatalog({ 'catalogId': query, 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
-      } else if (this.listQuery.name) {
-        this.searchProductInfo(this.listQuery.name)
+      } else if (this.listQuery.name || this.listQuery.serNum) {
+        this.searchProductInfo({ 'name': this.listQuery.name, 'serNum': this.listQuery.serNum })
       } else {
         this.getProductInfo({ 'pageIndex': this.pageIndex, 'pageSize': this.pageSize })
       }
