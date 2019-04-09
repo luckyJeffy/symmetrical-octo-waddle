@@ -72,12 +72,13 @@
               <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status | statusInfoFilter }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <router-link :to="'/product/edit/'+scope.row.id">
+              <router-link :to="'/edit/'+scope.row.id">
                 <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
               </router-link>
               <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
+              <el-button type="info" size="mini" icon="el-icon-time" >限时</el-button>
               <el-button v-if="scope.row.status === 0" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
               <el-button v-if="scope.row.status === 9" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRestore(scope.row)">恢复</el-button>
             </template>

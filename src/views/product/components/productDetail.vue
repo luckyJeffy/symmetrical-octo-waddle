@@ -278,7 +278,7 @@ export default {
     },
 
     cancel() {
-      this.$router.push({ path: '/product/list' })
+      this.$router.push({ path: '/productList' })
     },
     getRemoteUserList(query) {
       userSearch(query).then(response => {

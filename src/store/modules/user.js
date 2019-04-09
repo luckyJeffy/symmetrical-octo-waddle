@@ -137,6 +137,9 @@ const user = {
                 if (items.component.startsWith('/product/create')) {
                   var myComponent = resolve => require(['@/views/product/create'], resolve)
                 } else
+                if (items.component.startsWith('/product/edit')) {
+                  var myComponent = resolve => require(['@/views/product/edit'], resolve)
+                } else
                 if (items.component.startsWith('/catalog/index')) {
                   var myComponent = resolve => require(['@/views/catalog/index'], resolve)
                 } else
@@ -146,7 +149,9 @@ const user = {
                 if (items.component.startsWith('/user/index')) {
                   var myComponent = resolve => require(['@/views/user/index'], resolve)
                 }
-
+                if (items.component.startsWith('/integral/integralList')) {
+                  var myComponent = resolve => require(['@/views/integral/integralList'], resolve)
+                }
                 const routerObjChildren = {
                   path: items.path,
                   component: myComponent,
