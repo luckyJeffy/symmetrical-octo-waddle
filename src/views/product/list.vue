@@ -172,21 +172,19 @@
             type="datetime"
             format="yyyy-MM-dd-HH"
             placeholder="请选择结束时间"
-            class="limitedTimeTempTime">
-          </el-date-picker>
+            class="limitedTimeTempTime"/>
         </el-form-item>
 
         <el-form-item label="结束时间" prop="endTime">
           <el-date-picker
             v-model="limitedTimeTemp.endTime"
+            :picker-options="pickerOptions"
             type="datetime"
             format="yyyy-MM-dd-HH"
             placeholder="请选择结束时间"
-            :picker-options="pickerOptions"
-            class="limitedTimeTempTime">
-          </el-date-picker>
+            class="limitedTimeTempTime"/>
         </el-form-item>
-        
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="limitedTimeDialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
@@ -259,13 +257,13 @@ export default {
         morePics: [],
         catalogId: 0
       },
-      limitedTimeTemp:{
-        storeId:'',
-        productId:'',
-        serNum:'',
-        specialOffer:'',
-        startTime:'',
-        endTime:''
+      limitedTimeTemp: {
+        storeId: '',
+        productId: '',
+        serNum: '',
+        specialOffer: '',
+        startTime: '',
+        endTime: ''
       },
       rules: {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
@@ -275,11 +273,11 @@ export default {
         startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
         endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }]
       },
-      pickerOptions: {//禁用当前日之前的时间
+      pickerOptions: {// 禁用当前日之前的时间
         disabledDate(time) {
-          return time.getTime() < Date.now() - 8.64e7;
-        },
-      } ,
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
       listQuery: {
         name: '',
         serNum: '',
@@ -491,30 +489,29 @@ export default {
       this.pageIndex = 1
       this.queryProductCatalog({ 'catalogId': query, 'pageIndex': 1, 'pageSize': this.pageSize })
     },
-    limitedTime(row){
+    limitedTime(row) {
       this.limitedTimeTemp = Object.assign({}, row) // copy obj
       this.limitedTimeDialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['limitedTimeDataForm'].clearValidate()
       })
     },
-    limitedTimeHandle(){
+    limitedTimeHandle() {
       this.$refs.limitedTimeDataForm.validate((valid) => {
-        if(valid){
+        if (valid) {
           // const product = Object.assign({}, this.limitedTimeTemp)
           console.log(this.limitedTimeTemp)
           const para = {
-            storeId:this.limitedTimeTemp.storeId,
-            productId:this.limitedTimeTemp.id,
-            serNum:this.limitedTimeTemp.serNum,
-            specialOffer:this.limitedTimeTemp.specialOffer,
-            startTime:(this.limitedTimeTemp.startTime).getTime(),
-            endTime:(this.limitedTimeTemp.endTime).getTime()
+            storeId: this.limitedTimeTemp.storeId,
+            productId: this.limitedTimeTemp.id,
+            serNum: this.limitedTimeTemp.serNum,
+            specialOffer: this.limitedTimeTemp.specialOffer,
+            startTime: (this.limitedTimeTemp.startTime).getTime(),
+            endTime: (this.limitedTimeTemp.endTime).getTime()
           }
           console.log(para)
         }
       })
-      
     }
   }
 }

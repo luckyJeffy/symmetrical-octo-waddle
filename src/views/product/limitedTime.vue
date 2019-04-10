@@ -98,7 +98,7 @@ export default {
     }
   },
   data() {
-    return{
+    return {
       tableLoading: false,
       pageIndex: 1,
       pageSize: 20,
@@ -109,7 +109,7 @@ export default {
       },
       listQuery: {
         serNum: ''
-      },
+      }
     }
   },
   computed: {
@@ -123,35 +123,35 @@ export default {
   watch: {
     async pageIndex(newValue, oldValue) {
       this.tableLoading = true
-      let page = {
+      const page = {
         'pageNo': newValue,
         'pageSize': this.pageSize,
-        'serNum': this.listQuery.serNum 
+        'serNum': this.listQuery.serNum
       }
       await this.getlistBizBargain(page)
       this.tableLoading = false
     },
     async pageSize(newValue, oldValue) {
       this.tableLoading = true
-      let page = {
+      const page = {
         'pageNo': this.pageIndex,
         'pageSize': newValue,
-        'serNum': this.listQuery.serNum 
+        'serNum': this.listQuery.serNum
       }
       await this.getlistBizBargain(page)
       this.tableLoading = false
     }
   },
   created() {
-    let page = {
-        'pageNo': this.pageIndex,
-        'pageSize': this.pageSize,
-        'serNum': this.listQuery.serNum 
+    const page = {
+      'pageNo': this.pageIndex,
+      'pageSize': this.pageSize,
+      'serNum': this.listQuery.serNum
     }
     this.getlistBizBargain(page)
   },
-  methods:{
-     ...mapActions({
+  methods: {
+    ...mapActions({
       'getlistBizBargain': 'GetlistBizBargain'
     }),
     handleCurrentChange(val) {
@@ -161,13 +161,13 @@ export default {
       this.pageSize = val
     },
     handleFilter() {
-      let page = {
+      const page = {
         'pageNo': this.pageIndex,
         'pageSize': this.pageSize,
-        'serNum': this.listQuery.serNum 
+        'serNum': this.listQuery.serNum
       }
       this.getlistBizBargain(page)
-    },
+    }
   }
 }
 </script>
