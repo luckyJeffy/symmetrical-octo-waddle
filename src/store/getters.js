@@ -22,6 +22,8 @@ const getters = {
   orderList: state => state.order.list,
   orderCount: state => state.order.totalCount,
   userList: state => state.user.list,
-  userCount: state => state.user.totalCount
+  userCount: state => state.user.totalCount,
+  limitedTimeList: state => state.limitedTime.list,
+  limitedTimeCount: state => state.limitedTime.totalCount
 }
 export default getters

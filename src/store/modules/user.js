@@ -140,6 +140,9 @@ const user = {
                 if (items.component.startsWith('/product/edit')) {
                   var myComponent = resolve => require(['@/views/product/edit'], resolve)
                 } else
+                if (items.component.startsWith('/product/limitedTime')) {
+                  var myComponent = resolve => require(['@/views/product/limitedTime'], resolve)
+                } else
                 if (items.component.startsWith('/catalog/index')) {
                   var myComponent = resolve => require(['@/views/catalog/index'], resolve)
                 } else

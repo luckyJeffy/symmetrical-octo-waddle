@@ -10,6 +10,7 @@ import order from './modules/order'
 import userList from './modules/userList'
 import system from './modules/system'
 import integral from './modules/integral'
+import limitedTime from './modules/limitedTime'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -25,7 +26,8 @@ const store = new Vuex.Store({
     order,
     userList,
     system,
-    integral
+    integral,
+    limitedTime
   },
   getters
 })

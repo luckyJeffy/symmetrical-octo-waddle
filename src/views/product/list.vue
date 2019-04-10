@@ -78,7 +78,7 @@
                 <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
               </router-link>
               <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button type="info" size="mini" icon="el-icon-time" >限时</el-button>
+              <el-button type="info" size="mini" icon="el-icon-time" @click="limitedTime(scope.row)">限时</el-button>
               <el-button v-if="scope.row.status === 0" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
               <el-button v-if="scope.row.status === 9" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRestore(scope.row)">恢复</el-button>
             </template>
@@ -161,6 +161,38 @@
         <el-button type="primary" @click="handleModifyStatus">保存</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="limitedTimeDialogFormVisible">
+      <el-form ref="limitedTimeDataForm" :rules="limitedTimeRules" :model="limitedTimeTemp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="特价" prop="specialOffer">
+          <el-input v-model="limitedTimeTemp.specialOffer"/>
+        </el-form-item>
+        <el-form-item label="开始时间" prop="startTime">
+          <el-date-picker
+            v-model="limitedTimeTemp.startTime"
+            type="datetime"
+            format="yyyy-MM-dd-HH"
+            placeholder="请选择结束时间"
+            class="limitedTimeTempTime">
+          </el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="结束时间" prop="endTime">
+          <el-date-picker
+            v-model="limitedTimeTemp.endTime"
+            type="datetime"
+            format="yyyy-MM-dd-HH"
+            placeholder="请选择结束时间"
+            :picker-options="pickerOptions"
+            class="limitedTimeTempTime">
+          </el-date-picker>
+        </el-form-item>
+        
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="limitedTimeDialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button type="primary" @click="limitedTimeHandle">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -217,6 +249,7 @@ export default {
         label: 'label'
       },
       dialogFormVisible: false,
+      limitedTimeDialogFormVisible: false,
       catalogList: [],
       temp: {
         id: undefined,
@@ -226,9 +259,27 @@ export default {
         morePics: [],
         catalogId: 0
       },
+      limitedTimeTemp:{
+        storeId:'',
+        productId:'',
+        serNum:'',
+        specialOffer:'',
+        startTime:'',
+        endTime:''
+      },
       rules: {
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
+      limitedTimeRules: {
+        specialOffer: [{ required: true, message: '特价不能为空', trigger: 'blur' }],
+        startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
+        endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }]
+      },
+      pickerOptions: {//禁用当前日之前的时间
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        },
+      } ,
       listQuery: {
         name: '',
         serNum: '',
@@ -439,6 +490,31 @@ export default {
     selectFilter(query) {
       this.pageIndex = 1
       this.queryProductCatalog({ 'catalogId': query, 'pageIndex': 1, 'pageSize': this.pageSize })
+    },
+    limitedTime(row){
+      this.limitedTimeTemp = Object.assign({}, row) // copy obj
+      this.limitedTimeDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['limitedTimeDataForm'].clearValidate()
+      })
+    },
+    limitedTimeHandle(){
+      this.$refs.limitedTimeDataForm.validate((valid) => {
+        if(valid){
+          // const product = Object.assign({}, this.limitedTimeTemp)
+          console.log(this.limitedTimeTemp)
+          const para = {
+            storeId:this.limitedTimeTemp.storeId,
+            productId:this.limitedTimeTemp.id,
+            serNum:this.limitedTimeTemp.serNum,
+            specialOffer:this.limitedTimeTemp.specialOffer,
+            startTime:(this.limitedTimeTemp.startTime).getTime(),
+            endTime:(this.limitedTimeTemp.endTime).getTime()
+          }
+          console.log(para)
+        }
+      })
+      
     }
   }
 }
@@ -480,5 +556,8 @@ export default {
 }
 .query-select{
   width: 125px;
+}
+.limitedTimeTempTime{
+  width: 310px;
 }
 </style>
