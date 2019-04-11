@@ -11,7 +11,7 @@
         <div class="filter-container">
           <el-input v-model="listQuery.serNum" placeholder="序列号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-          <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button>
+          <!-- <el-button type="primary" icon="el-icon-document" class="filter-item">新增</el-button> -->
         </div>
         <el-table
           v-loading="tableLoading"
@@ -56,14 +56,20 @@
               <span>{{ scope.row.endTime | createTimeFilter }}</span>
             </template>
           </el-table-column>
+           <el-table-column label="状态" prop="bargainStatus" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.bargainStatus | bargainStatusFilter }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="创建时间" prop="createTime" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.createTime | createTimeFilter }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-document" @click="handleUpdate(scope.row)">详情</el-button>
+              <el-button type="danger" size="mini" icon="el-icon-document" @click="handleProductRemove(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -78,12 +84,55 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+    <el-dialog :visible.sync="limitedTimeDialogFormVisible">
+      <el-form ref="limitedTimeDataForm" :rules="limitedTimeRules" :model="limitedTimeTemp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="id" prop="id">
+          <el-input v-model="limitedTimeTemp.id" disabled />
+        </el-form-item>
+        <el-form-item label="门店ID" prop="storeId">
+          <el-input v-model="limitedTimeTemp.storeId" disabled />
+        </el-form-item>
+        <el-form-item label="商品id" prop="productId">
+          <el-input v-model="limitedTimeTemp.productId" disabled />
+        </el-form-item>
+        <el-form-item label="序列号" prop="serNum">
+          <el-input v-model="limitedTimeTemp.serNum" disabled />
+        </el-form-item>
+       
+        <el-form-item label="特价" prop="specialOffer">
+          <el-input v-model="limitedTimeTemp.specialOffer"/>
+        </el-form-item>
+        <el-form-item label="开始时间" prop="startTime">
+          <el-date-picker
+            v-model="limitedTimeTemp.startTime"
+            type="datetime"
+            format="yyyy-MM-dd-HH"
+            placeholder="请选择结束时间"
+            class="limitedTimeTempTime"/>
+        </el-form-item>
+
+        <el-form-item label="结束时间" prop="endTime">
+          <el-date-picker
+            v-model="limitedTimeTemp.endTime"
+            :picker-options="pickerOptions"
+            type="datetime"
+            format="yyyy-MM-dd-HH"
+            placeholder="请选择结束时间"
+            class="limitedTimeTempTime"/>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="limitedTimeDialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button type="primary" @click="limitedTimeHandle">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import treeTable from '@/components/TreeTable'
-import { getlistBizBargain } from '@/api/limitedTime'
+import { getlistBizBargain, updateBizBargain, forceRemoveBizBargain } from '@/api/limitedTime'
 export default {
   filters: {
     createTimeFilter(value) {
@@ -95,6 +144,10 @@ export default {
       var m = date.getMinutes() + ':'
       var s = date.getSeconds()
       return Y + M + D + h + m + s
+    },
+    bargainStatusFilter(value){
+      if(value==0) return "正常"
+      if(value==9) return "已失效"
     }
   },
   data() {
@@ -109,7 +162,27 @@ export default {
       },
       listQuery: {
         serNum: ''
-      }
+      },
+      limitedTimeTemp: {
+        id:'',
+        storeId: '',
+        productId: '',
+        serNum: '',
+        specialOffer: '',
+        startTime: '',
+        endTime: ''
+      },
+      limitedTimeRules: {
+        specialOffer: [{ required: true, message: '特价不能为空', trigger: 'blur' }],
+        startTime: [{ required: true, message: '请选择开始时间', trigger: 'blur' }],
+        endTime: [{ required: true, message: '请选择结束时间', trigger: 'blur' }]
+      },
+      pickerOptions: {// 禁用当前日之前的时间
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
+      limitedTimeDialogFormVisible: false,
     }
   },
   computed: {
@@ -167,10 +240,81 @@ export default {
         'serNum': this.listQuery.serNum
       }
       this.getlistBizBargain(page)
-    }
+    },
+    handleUpdate(row) {
+      this.limitedTimeTemp = Object.assign({}, row) // copy obj
+      this.limitedTimeDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['limitedTimeDataForm'].clearValidate()
+      })
+    },
+    limitedTimeHandle() {
+      this.$refs.limitedTimeDataForm.validate((valid) => {
+        if (valid) {
+          console.log(this.limitedTimeTemp)
+          const para = {
+            id:this.limitedTimeTemp.id,
+            storeId: this.limitedTimeTemp.storeId,
+            productId: this.limitedTimeTemp.id,
+            serNum: this.limitedTimeTemp.serNum,
+            specialOffer: this.limitedTimeTemp.specialOffer,
+            startTime: this.limitedTimeTemp.startTime,
+            endTime: this.limitedTimeTemp.endTime
+          }
+          console.log(para)
+          updateBizBargain(para).then((res) => {
+            if (res.data.resultCode == 200) {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: res.data.resultMessage,
+                type: 'error'
+              })
+            }
+            this.limitedTimeDialogFormVisible = false
+            this.handleFilter()
+          })
+        }
+      })
+    },
+    handleProductRemove(row) {
+      const self = this
+      self.$confirm('是否删除该商品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        forceRemoveBizBargain({id:row.id}).then(res => {
+          console.log(res)
+          if (res.data.resultCode === '200') {
+            self.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            self.handleFilter()
+          } else {
+              self.$message({
+                message: res.data.resultMessage,
+                type: 'error'
+              })
+            }
+        }).catch(e => {
+          console.error(e)
+        })
+      })
+    },
   }
 }
 </script>
-<style>
-
+<style rel="stylesheet/scss" lang="scss" scoped>
+.product-list-container {
+  padding: 10px;
+  .el-pagination {
+    padding: 10px 5px;
+    white-space: normal;
+  }
+}
 </style>

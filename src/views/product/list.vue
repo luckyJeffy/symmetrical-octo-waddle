@@ -78,7 +78,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-document">详情</el-button>
               </router-link>
               <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button type="info" size="mini" icon="el-icon-time" @click="limitedTime(scope.row)">限时</el-button>
+              <el-button v-if="scope.row.bizBargain" type="info" size="mini" icon="el-icon-time" disabled class="limitedTimeButton">已特价</el-button>
+              <el-button v-else type="info" size="mini" icon="el-icon-time" @click="limitedTime(scope.row)" class="limitedTimeButton">特价</el-button>
               <el-button v-if="scope.row.status === 0" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRemove(scope.row)">删除</el-button>
               <el-button v-if="scope.row.status === 9" type="danger" size="mini" icon="el-icon-delete" @click="handleProductRestore(scope.row)">恢复</el-button>
             </template>
@@ -200,6 +201,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { parseTime, recursivelyParseObjectString } from '@/utils'
 import { updateProductInfo, deleteProduct, restoreBizProduct } from '@/api/product'
 import { fetchCatalogList } from '@/api/catalog'
+import { insertBizBargain } from '@/api/limitedTime'
 import local from './local'
 import Dropzone from '@/components/Dropzone'
 const viewName = 'productList'
@@ -510,6 +512,21 @@ export default {
             endTime: (this.limitedTimeTemp.endTime).getTime()
           }
           console.log(para)
+          insertBizBargain(para).then((res) => {
+            if (res.data.resultCode == 200) {
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: res.data.resultMessage,
+                type: 'error'
+              })
+            }
+            this.limitedTimeDialogFormVisible = false
+            this.handleFilter()
+          })
         }
       })
     }
@@ -556,5 +573,8 @@ export default {
 }
 .limitedTimeTempTime{
   width: 310px;
+}
+.limitedTimeButton{
+  width: 70px;
 }
 </style>

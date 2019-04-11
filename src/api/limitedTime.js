@@ -32,3 +32,11 @@ export function forceRemoveBizBargain(para) {
     data: para
   })
 }
+// 修改特价商品
+export function updateBizBargain(para) {
+  return request({
+    url: '/biz/v01/updateBizBargain.do',
+    method: 'post',
+    data: para
+  })
+}
