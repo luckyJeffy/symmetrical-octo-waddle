@@ -262,6 +262,7 @@ export default {
       limitedTimeTemp: {
         storeId: '',
         productId: '',
+        name: '',
         serNum: '',
         specialOffer: '',
         startTime: '',
@@ -506,6 +507,7 @@ export default {
           const para = {
             storeId: this.limitedTimeTemp.storeId,
             productId: this.limitedTimeTemp.id,
+            name: this.limitedTimeTemp.name,
             serNum: this.limitedTimeTemp.serNum,
             specialOffer: this.limitedTimeTemp.specialOffer,
             startTime: (this.limitedTimeTemp.startTime).getTime(),

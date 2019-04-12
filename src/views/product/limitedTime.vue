@@ -36,6 +36,11 @@
               <span>{{ scope.row.productId }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="商品名称" prop="name" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="序列号" prop="serNum" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.serNum }}</span>
@@ -94,6 +99,9 @@
         </el-form-item>
         <el-form-item label="商品id" prop="productId">
           <el-input v-model="limitedTimeTemp.productId" disabled />
+        </el-form-item>
+        <el-form-item label="商品名称" prop="name">
+          <el-input v-model="limitedTimeTemp.name" disabled />
         </el-form-item>
         <el-form-item label="序列号" prop="serNum">
           <el-input v-model="limitedTimeTemp.serNum" disabled />
@@ -256,6 +264,7 @@ export default {
             id:this.limitedTimeTemp.id,
             storeId: this.limitedTimeTemp.storeId,
             productId: this.limitedTimeTemp.id,
+            name: this.limitedTimeTemp.name,
             serNum: this.limitedTimeTemp.serNum,
             specialOffer: this.limitedTimeTemp.specialOffer,
             startTime: this.limitedTimeTemp.startTime,
